@@ -5,6 +5,7 @@ const meetingSchema = new Schema(
     menteeId: { type: Schema.Types.ObjectId, ref: "User" },
     mentorId: { type: Schema.Types.ObjectId, ref: "User" },
     date: { type: Date },
+    time: { type: String },
     duration: { type: Number },
     notesBy: {
       mentee: { type: String },

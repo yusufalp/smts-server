@@ -18,6 +18,7 @@ const userSchema = new Schema(
       trim: true,
     },
     password: { type: String, required: true },
+    role: { type: String, default: "mentee" },
   },
   { timestamps: true }
 );

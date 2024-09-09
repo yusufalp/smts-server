@@ -3,7 +3,6 @@ import mongoose, { Schema } from "mongoose";
 const profileSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
-    role: { type: String, default: "mentee" },
     email: { type: String },
     cohort: { type: String },
     address: {
