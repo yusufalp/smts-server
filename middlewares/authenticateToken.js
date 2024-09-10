@@ -5,7 +5,7 @@ export function authenticateToken(req, res, next) {
     const token = req.get("Authorization")?.split(" ")[1];
 
     if (!token) {
-      throw new Error("Unauthorized");
+      throw new Error("Token is missing");
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
