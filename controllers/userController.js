@@ -76,3 +76,26 @@ export const loginUser = async (req, res, next) => {
 };
 
 export const logoutUser = (req, res, next) => {};
+
+export const updateRole = (req, res, next) => {
+  const { newRole, userId } = req.body;
+
+  try {
+    const user = User.findByIdAndUpdate(
+      userId,
+      { role: newRole },
+      { new: true }
+    );
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    res.status(201).json({
+      success: { message: "User role is updated successfully" },
+      data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
