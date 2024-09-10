@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export function authenticateToken(req, res, next) {
   try {
-    const token = req.headers("Authorization")?.split(" ")[1];
+    const token = req.get("Authorization")?.split(" ")[1];
 
     if (!token) {
       throw new Error("Unauthorized");
