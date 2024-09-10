@@ -7,6 +7,7 @@ import morgan from "morgan";
 
 import userRoutes from "./routes/userRoutes.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 
@@ -17,7 +18,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", userRoutes);
-app.use("/api/meetings", meetingRoutes)
+app.use("/api/meetings", meetingRoutes);
+
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res, next) => {
   res.send("We are just getting started...");

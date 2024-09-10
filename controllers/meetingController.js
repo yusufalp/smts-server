@@ -1,5 +1,4 @@
 import Meeting from "../models/meetingModel.js";
-import Profile from "../models/profileModel.js";
 
 export const createMeeting = async (req, res, next) => {
   const { mentorId, date, time, duration, notes } = req.body;
@@ -30,8 +29,8 @@ export const createMeeting = async (req, res, next) => {
 export const getMeetingsByUserId = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    console.log('req.user :>> ', req.user);
-    
+    console.log("req.user :>> ", req.user);
+
     if (!userId) {
       throw new Error("Unauthorized");
     }
@@ -53,8 +52,4 @@ export const getMeetingsByUserId = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-export const getAllMeetings = (req, res, next) => {
-  console.log("object :>> ", req);
 };
