@@ -15,13 +15,19 @@ const profileSchema = new Schema(
       zip: { type: Number },
       country: { type: String, default: "US" },
     },
-    socials: {
+    assigned: {
+      mentor: { type: Schema.Types.ObjectId, ref: "User", default: null },
+      coach: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    },
+    links: {
+      portfolio: { type: String },
       linkedin: { type: String },
       twitter: { type: String },
       github: { type: String },
     },
-    portfolio: { type: String },
+    // * active, inactive, graduated
     status: { type: String, default: "active" },
+    graduation: { type: Date },
   },
   { timestamps: true }
 );
