@@ -1,8 +1,8 @@
 import express from "express";
 
-import { authenticateToken } from "../middlewares/authenticateToken";
-import { authorizeAdmin } from "../middlewares/authorizeAdmin";
-import { getAllMeetings, getAllProfiles } from "../controllers/adminController";
+import { authenticateToken } from "../middlewares/authenticateToken.js";
+import { authorizeAdmin } from "../middlewares/authorizeAdmin.js";
+import { getAllMeetings, getAllProfiles } from "../controllers/adminController.js";
 
 const router = express.Router();
 

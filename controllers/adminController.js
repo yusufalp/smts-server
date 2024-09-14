@@ -1,4 +1,4 @@
-import Meeting from "../models/meetingModel";
+import Meeting from "../models/meetingModel.js";
 
 export const getAllMeetings = async (req, res, next) => {
   try {
