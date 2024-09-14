@@ -4,6 +4,7 @@ import "./config/database.js";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import cors from "cors";
 
 import userRoutes from "./routes/userRoutes.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
@@ -13,6 +14,12 @@ const app = express();
 
 app.use(helmet());
 app.use(morgan("dev"));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
