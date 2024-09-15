@@ -3,6 +3,15 @@ import mongoose, { Schema } from "mongoose";
 const profileSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
+    name: {
+      first: {
+        type: String,
+        required: true,
+      },
+      last: {
+        type: String,
+      },
+    },
     email: { type: String },
     cohort: { type: String },
     address: {
@@ -22,11 +31,12 @@ const profileSchema = new Schema(
     links: {
       portfolio: { type: String },
       linkedin: { type: String },
-      twitter: { type: String },
       github: { type: String },
     },
     // * active, inactive, graduated
     status: { type: String, default: "active" },
+    // * admin, mentor, mentee, coach, alumni
+    role: { type: String, default: "mentee" },
     graduation: { type: Date },
   },
   { timestamps: true }
