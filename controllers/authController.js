@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 
 import User from "../models/userModel.js";
+import Profile from "../models/profileModel.js";
 import { generateToken } from "../utils/generateToken.js";
 
 export const signupUser = async (req, res, next) => {
@@ -23,6 +24,14 @@ export const signupUser = async (req, res, next) => {
 
     await newUser.save();
 
+    const newProfile = new Profile({
+      userId: newUser._id,
+    });
+
+    await newProfile.save();
+
+    console.log('newProfile :>> ', newProfile);
+
     const accessToken = generateToken(newUser, "access");
     const refreshToken = generateToken(newUser, "refresh");
 
@@ -34,7 +43,7 @@ export const signupUser = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: "A new user is created" },
-      data: { user: newUser, accessToken },
+      data: { user: newUser, accessToken, profile: newProfile },
     });
   } catch (error) {
     return next(error);
@@ -75,25 +84,12 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
-export const logoutUser = (req, res, next) => {};
-
-export const updateRole = (req, res, next) => {
-  const { newRole, userId } = req.body;
-
+export const logoutUser = (req, res, next) => {
   try {
-    const user = User.findByIdAndUpdate(
-      userId,
-      { role: newRole },
-      { new: true }
-    );
+    res.clearCookie("refreshToken");
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    res.status(201).json({
-      success: { message: "User role is updated successfully" },
-      data: { user },
+    res.status(200).json({
+      success: { message: "Logout successful" },
     });
   } catch (error) {
     next(error);

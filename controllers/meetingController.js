@@ -29,7 +29,6 @@ export const createMeeting = async (req, res, next) => {
 export const getMeetingsByUserId = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    console.log("req.user :>> ", req.user);
 
     if (!userId) {
       throw new Error("Unauthorized");

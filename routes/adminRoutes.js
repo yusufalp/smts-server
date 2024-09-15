@@ -2,13 +2,29 @@ import express from "express";
 
 import { authenticateToken } from "../middlewares/authenticateToken.js";
 import { authorizeAdmin } from "../middlewares/authorizeAdmin.js";
-import { getAllMeetings, getAllProfiles } from "../controllers/adminController.js";
+import {
+  getAllMeetings,
+  getAllProfiles,
+  getAllUsers,
+  updateRole,
+  updateCohort,
+  updateStatus,
+  updateGraduation,
+} from "../controllers/adminController.js";
 
 const router = express.Router();
 
-// need admin permission
-router.get("/meetings", authenticateToken, authorizeAdmin, getAllMeetings);
+router.use(authenticateToken);
+router.use(authorizeAdmin);
 
-router.get("/profiles", authenticateToken, authorizeAdmin, getAllProfiles);
+// need admin permission
+router.get("/meetings", getAllMeetings);
+router.get("/profiles", getAllProfiles);
+router.get("/users", getAllUsers);
+
+router.post("/update-role", updateRole);
+router.post("/update-cohort", updateCohort);
+router.post("/update-status", updateStatus);
+router.post("/update-graduation", updateGraduation);
 
 export default router;

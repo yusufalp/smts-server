@@ -1,19 +1,12 @@
 import express from "express";
 
-import {
-  loginUser,
-  logoutUser,
-  signupUser,
-  updateRole,
-} from "../controllers/userController.js";
-import { authorizeAdmin } from "../middlewares/authorizeAdmin.js";
 import { authenticateToken } from "../middlewares/authenticateToken.js";
+import { getUserById } from "../controllers/userControllers.js";
 
 const router = express.Router();
 
-router.post("/signup", signupUser);
-router.post("/login", loginUser);
-router.post("/logout", logoutUser);
-router.post("/update-role", authenticateToken, authorizeAdmin, updateRole);
+router.use(authenticateToken);
+
+router.get("/:_id", getUserById);
 
 export default router;
