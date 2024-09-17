@@ -1,6 +1,16 @@
+import Profile from "../models/profileModel.js";
+
 export async function authorizeAdmin(req, res, next) {
   try {
-    const { role } = req.user;
+    const userId = req.user._id;
+
+    const userProfile = await Profile.find({ userId });
+
+    if (!userProfile) {
+      throw new Error("Profile not found");
+    }
+
+    const { role } = userProfile;
 
     if (role !== "admin") {
       throw new Error("Access denied");
