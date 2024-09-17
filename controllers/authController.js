@@ -17,7 +17,6 @@ export const signupUser = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      name: { first, last },
       username,
       password: hashedPassword,
     });
@@ -26,11 +25,10 @@ export const signupUser = async (req, res, next) => {
 
     const newProfile = new Profile({
       userId: newUser._id,
+      name: { first, last },
     });
 
     await newProfile.save();
-
-    console.log('newProfile :>> ', newProfile);
 
     const accessToken = generateToken(newUser, "access");
     const refreshToken = generateToken(newUser, "refresh");
@@ -43,7 +41,7 @@ export const signupUser = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: "A new user is created" },
-      data: { user: newUser, accessToken, profile: newProfile },
+      data: { accessToken, profile: newProfile },
     });
   } catch (error) {
     return next(error);
@@ -66,6 +64,12 @@ export const loginUser = async (req, res, next) => {
       throw new Error("Incorrect username or password");
     }
 
+    const profile = await Profile.findOne({ userId: user._id });
+
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+
     const accessToken = generateToken(user, "access");
     const refreshToken = generateToken(user, "refresh");
 
@@ -77,7 +81,7 @@ export const loginUser = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: "Login successful" },
-      data: { user, accessToken },
+      data: { accessToken, profile },
     });
   } catch (error) {
     next(error);
