@@ -22,7 +22,7 @@ const profileSchema = new Schema(
       city: { type: String },
       state: { type: String },
       zip: { type: Number },
-      country: { type: String, default: "US" },
+      country: { type: String },
     },
     assigned: {
       mentor: { type: Schema.Types.ObjectId, ref: "User", default: null },
