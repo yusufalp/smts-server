@@ -6,9 +6,11 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 
-import userRoutes from "./routes/userRoutes.js";
-import meetingRoutes from "./routes/meetingRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import meetingRoutes from "./routes/meetingRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -24,10 +26,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/auth", userRoutes);
-app.use("/api/meetings", meetingRoutes);
-
 app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/meetings", meetingRoutes);
+app.use("/api/profiles", profileRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res, next) => {
   res.send("We are just getting started...");
