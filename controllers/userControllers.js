@@ -4,18 +4,14 @@ export const getUserById = async (req, res, next) => {
   const { _id } = req.params;
 
   if (_id) {
-    return res.status(400).json({
-      error: { message: "Id is required" },
-    });
+    throw new Error("Id is required");
   }
 
   try {
     const user = await User.findById(_id);
 
     if (!user) {
-      return res.status(400).json({
-        error: { message: "User not found" },
-      });
+      throw new Error("User not found");
     }
 
     res.status(200).json({
