@@ -1,4 +1,5 @@
 import Meeting from "../models/meetingModel.js";
+import Profile from "../models/profileModel.js";
 import User from "../models/userModel.js";
 
 export const getAllMeetings = async (req, res, next) => {
@@ -43,20 +44,22 @@ export const getAllUsers = async (req, res, next) => {
 export const updateRole = async (req, res, next) => {
   const { newRole, userId } = req.body;
 
+  // TODO: add more validations here
+
   try {
-    const user = await User.findByIdAndUpdate(
-      userId,
+    const profile = await Profile.findOneAndUpdate(
+      { userId },
       { role: newRole },
       { new: true }
     );
 
-    if (!user) {
-      throw new Error("User not found");
+    if (!profile) {
+      throw new Error("Profile not found");
     }
 
     res.status(201).json({
       success: { message: "User role is updated successfully" },
-      data: { user },
+      data: { profile },
     });
   } catch (error) {
     next(error);
