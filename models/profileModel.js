@@ -13,7 +13,6 @@ const profileSchema = new Schema(
       },
     },
     email: { type: String },
-    cohort: { type: String },
     address: {
       street: {
         line1: { type: String },
@@ -24,18 +23,19 @@ const profileSchema = new Schema(
       zip: { type: Number },
       country: { type: String },
     },
-    assigned: {
-      mentor: { type: Schema.Types.ObjectId, ref: "User", default: null },
-      coach: { type: Schema.Types.ObjectId, ref: "User", default: null },
-    },
     links: {
       portfolio: { type: String },
       linkedin: { type: String },
       github: { type: String },
     },
+    assigned: {
+      mentor: { type: Schema.Types.ObjectId, ref: "User", default: null },
+      coach: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    },
+    cohort: { type: String },
     // * active, inactive, graduated
     status: { type: String, default: "active" },
-    // * admin, mentor, mentee, coach, alumni
+    // * admin, mentor, coach, mentee, alumni
     role: { type: String, default: "mentee" },
     graduation: { type: Date },
   },

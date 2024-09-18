@@ -41,6 +41,68 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
+export const assignMentor = async (req, res, next) => {
+  const { mentorId, userId } = req.body;
+
+  try {
+    if (!mentorId) {
+      throw new Error("Mentor id is required");
+    }
+
+    if (!userId) {
+      throw new Error("User id is required");
+    }
+
+    const profile = await Profile.findOneAndUpdate(
+      { userId },
+      { "assigned.mentor": mentorId },
+      { new: true }
+    );
+
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+
+    res.status(200).json({
+      success: { message: "Mentor updated successfully" },
+      data: { profile },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const assignCoach = async (req, res, next) => {
+  const { coachId, userId } = req.body;
+
+  try {
+    if (!coachId) {
+      throw new Error("Coach id is required");
+    }
+
+    if (!userId) {
+      throw new Error("User id is required");
+    }
+
+    const profile = await Profile.findOneAndUpdate(
+      { userId },
+      { "assigned.coach": coachId },
+      { new: true }
+    );
+
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+
+    res.status(200).json({
+      success: { message: "Coach updated successfully" },
+      data: { profile },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateRole = async (req, res, next) => {
   const { newRole, userId } = req.body;
 

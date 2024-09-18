@@ -6,6 +6,8 @@ import {
   getAllMeetings,
   getAllProfiles,
   getAllUsers,
+  assignMentor,
+  assignCoach,
   updateRole,
   updateCohort,
   updateStatus,
@@ -21,6 +23,9 @@ router.use(authorizeAdmin);
 router.get("/meetings", getAllMeetings);
 router.get("/profiles", getAllProfiles);
 router.get("/users", getAllUsers);
+
+router.post("/assign-mentor", assignMentor);
+router.post("/assign-coach", assignCoach);
 
 router.post("/update-role", updateRole);
 router.post("/update-cohort", updateCohort);
