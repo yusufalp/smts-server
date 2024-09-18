@@ -4,7 +4,7 @@ export async function authorizeAdmin(req, res, next) {
   try {
     const userId = req.user._id;
 
-    const userProfile = await Profile.find({ userId });
+    const userProfile = await Profile.findOne({ userId });
 
     if (!userProfile) {
       throw new Error("Profile not found");
