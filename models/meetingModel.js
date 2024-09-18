@@ -2,15 +2,18 @@ import mongoose, { Schema } from "mongoose";
 
 const meetingSchema = new Schema(
   {
-    menteeId: { type: Schema.Types.ObjectId, ref: "User" },
-    mentorId: { type: Schema.Types.ObjectId, ref: "User" },
+    title: { type: String },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
     date: { type: Date },
     time: { type: String },
     duration: { type: Number },
-    notesBy: {
-      mentee: { type: String },
-      mentor: { type: String },
-    },
+    participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    notes: [
+      {
+        by: { type: Schema.Types.ObjectId, ref: "User" },
+        note: { type: String },
+      },
+    ],
   },
   { timestamps: true }
 );
