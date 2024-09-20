@@ -1,18 +1,19 @@
 import Meeting from "../models/meetingModel.js";
+import Profile from "../models/profileModel.js";
 
 export const createMeeting = async (req, res, next) => {
-  const { mentorId, date, time, duration, notes } = req.body;
+  const { title, mentorId, date, time, duration, notes } = req.body;
+  const userId = req.user._id;
 
   try {
-    const userId = req.user._id;
-
     const newMeeting = new Meeting({
-      menteeId: userId,
-      mentorId,
+      title,
+      userId,
+      participants: [mentorId],
       date,
       time,
       duration,
-      notesBy: { mentee: notes },
+      notes: { by: userId, note: notes },
     });
 
     await newMeeting.save();
@@ -26,22 +27,28 @@ export const createMeeting = async (req, res, next) => {
   }
 };
 
-export const getMeetingsByUserId = async (req, res, next) => {
-  try {
-    const userId = req.user._id;
+export const getMeetings = async (req, res, next) => {
+  const userId = req.user._id;
 
+  try {
     if (!userId) {
       throw new Error("Unauthorized");
     }
 
-    const { role } = req.user;
+    const profile = await Profile.findOne({ userId });
+
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+
+    const { role } = profile;
 
     let meetings;
 
-    if (role === "mentor") {
-      meetings = await Meeting.find({ mentorId: userId });
-    } else if (role === "mentee") {
-      meetings = await Meeting.find({ menteeId: userId });
+    if (role === "mentee") {
+      meetings = await Meeting.find({ organizerId: userId });
+    } else {
+      meetings = await Meeting.find({ participants: userId });
     }
 
     res.status(200).json({
