@@ -9,3 +9,7 @@ export function generateToken(user, tokenType) {
 
   return jwt.sign(userWithoutPassword, process.env.JWT_SECRET, { expiresIn });
 }
+
+export function decodeToken(token) {
+  return jwt.verify(token, process.env.JWT_SECRET);
+}
