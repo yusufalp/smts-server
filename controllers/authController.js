@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 
 import User from "../models/userModel.js";
 import Profile from "../models/profileModel.js";
-import { generateToken } from "../utils/generateToken.js";
+import { decodeToken, generateToken } from "../utils/token.js";
 
 export const signupUser = async (req, res, next) => {
   const { first, last, username, password } = req.body;
@@ -73,6 +73,9 @@ export const loginUser = async (req, res, next) => {
     const accessToken = generateToken(user, "access");
     const refreshToken = generateToken(user, "refresh");
 
+    const decoded = decodeToken(accessToken);
+    const expiresAt = decoded.exp;
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
@@ -81,7 +84,7 @@ export const loginUser = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: "Login successful" },
-      data: { accessToken, profile },
+      data: { accessToken, expiresAt, profile },
     });
   } catch (error) {
     next(error);
