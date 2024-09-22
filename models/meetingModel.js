@@ -4,8 +4,7 @@ const meetingSchema = new Schema(
   {
     title: { type: String },
     userId: { type: Schema.Types.ObjectId, ref: "User" },
-    date: { type: Date },
-    time: { type: String },
+    date: {type: Date},
     duration: { type: Number },
     participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
     notes: [

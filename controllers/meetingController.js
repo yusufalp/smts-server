@@ -5,13 +5,14 @@ export const createMeeting = async (req, res, next) => {
   const { title, mentorId, date, time, duration, notes } = req.body;
   const userId = req.user._id;
 
+  const dateISO = new Date(`${date} ${time}`);
+
   try {
     const newMeeting = new Meeting({
       title,
       userId,
       participants: [mentorId],
-      date,
-      time,
+      date: dateISO,
       duration,
       notes: { by: userId, note: notes },
     });
