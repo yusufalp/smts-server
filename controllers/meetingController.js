@@ -46,7 +46,7 @@ export const getMeetings = async (req, res, next) => {
     let meetings;
 
     if (role === "mentee") {
-      meetings = await Meeting.find({ organizerId: userId });
+      meetings = await Meeting.find({ userId: userId });
     } else {
       meetings = await Meeting.find({ participants: userId });
     }
