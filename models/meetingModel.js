@@ -1,15 +1,15 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const meetingSchema = new Schema(
   {
     title: { type: String },
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
-    date: {type: Date},
+    userId: { type: Schema.Types.ObjectId, ref: "Profile" },
+    date: { type: Date },
     duration: { type: Number },
-    participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    participants: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
     notes: [
       {
-        by: { type: Schema.Types.ObjectId, ref: "User" },
+        by: { type: Schema.Types.ObjectId, ref: "Profile" },
         note: { type: String },
       },
     ],
@@ -17,6 +17,6 @@ const meetingSchema = new Schema(
   { timestamps: true }
 );
 
-const Meeting = mongoose.model("Meeting", meetingSchema);
+const Meeting = model("Meeting", meetingSchema);
 
 export default Meeting;

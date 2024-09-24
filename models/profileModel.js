@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const profileSchema = new Schema(
   {
@@ -29,10 +29,10 @@ const profileSchema = new Schema(
       github: { type: String },
     },
     assigned: {
-      mentor: { type: Schema.Types.ObjectId, ref: "User", default: null },
-      coach: { type: Schema.Types.ObjectId, ref: "User", default: null },
+      mentor: { type: Schema.Types.ObjectId, ref: "Profile", default: null },
+      coach: { type: Schema.Types.ObjectId, ref: "Profile", default: null },
     },
-    cohort: { type: String },
+    cohort: { type: Number },
     // * active, inactive, graduated
     status: { type: String, default: "active" },
     // * admin, mentor, coach, mentee, alumni
@@ -42,6 +42,6 @@ const profileSchema = new Schema(
   { timestamps: true }
 );
 
-const Profile = mongoose.model("Profile", profileSchema);
+const Profile = model("Profile", profileSchema);
 
 export default Profile;
