@@ -2,8 +2,9 @@ import express from "express";
 
 import { authenticateToken } from "../middlewares/authenticateToken.js";
 import {
-  getProfile,
-  getMenteesByAdvisorId,
+  getAssignedAdvisors,
+  getAssignedMentees,
+  getProfileByUserId,
   updateAddress,
   updateEmail,
   updateLinks,
@@ -11,10 +12,14 @@ import {
 
 const router = express.Router();
 
+// http://localhost:8080/api/profiles
+
 router.use(authenticateToken);
 
-router.get("/", getProfile);
-router.get("/:advisorId/:advisorRole", getMenteesByAdvisorId);
+router.get("/advisors", getAssignedAdvisors);
+router.get("/mentees", getAssignedMentees);
+
+router.get("/:userId", getProfileByUserId);
 
 router.post("/update-email", updateEmail);
 router.post("/update-address", updateAddress);

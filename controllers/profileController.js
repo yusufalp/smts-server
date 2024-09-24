@@ -1,7 +1,69 @@
 import Profile from "../models/profileModel.js";
 
-export const getProfile = async (req, res, next) => {
+export const getAssignedAdvisors = async (req, res, next) => {
   const userId = req.user._id;
+  const field = req.query.field || "name";
+
+  try {
+    if (!userId) {
+      throw new Error("User id is required");
+    }
+
+    const advisors = await Profile.findOne({ userId }, "assigned")
+      .populate("assigned.mentor", field)
+      .populate("assigned.coach", field);
+
+    if (!advisors) {
+      throw new Error("Profile not found");
+    }
+
+    res.status(200).json({
+      success: { message: "Advisors populated successfully" },
+      data: advisors,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAssignedMentees = async (req, res, next) => {
+  const userId = req.user._id;
+
+  try {
+    if (!userId) {
+      throw new Error("User id is required");
+    }
+
+    const profile = await Profile.findOne({ userId }, "_id");
+
+    console.log('profile :>> ', profile);
+
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+
+    const mentees = await Profile.find({
+      $or: [
+        { "assigned.mentor": profile._id },
+        { "assigned.coach": profile._id },
+      ],
+    });
+
+    if (!mentees) {
+      throw new Error("Mentees not found");
+    }
+
+    res.status(200).json({
+      success: { message: "Mentees retrieved successfully" },
+      data: { mentees },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProfileByUserId = async (req, res, next) => {
+  const { userId } = req.params;
 
   try {
     if (!userId) {
@@ -15,36 +77,8 @@ export const getProfile = async (req, res, next) => {
     }
 
     res.status(200).json({
-      success: { message: "Profile retrieved successfully" },
+      success: { message: "Profile found successfully" },
       data: { profile },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getMenteesByAdvisorId = async (req, res, next) => {
-  const { advisorId, advisorRole } = req.params;
-
-  try {
-    if (!advisorId) {
-      throw new Error("Advisor id is required");
-    }
-
-    let mentees;
-    if (advisorRole === "mentor") {
-      mentees = await Profile.find({ "assigned.mentor": advisorId });
-    } else if (advisorRole === "coach") {
-      mentees = await Profile.find({ "assigned.coach": advisorId });
-    }
-
-    if (!mentees) {
-      throw new Error("Mentees not found");
-    }
-
-    res.status(200).json({
-      success: { message: "Mentees retrieved successfully" },
-      data: { mentees },
     });
   } catch (error) {
     next(error);
