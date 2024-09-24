@@ -53,9 +53,15 @@ export const assignMentor = async (req, res, next) => {
       throw new Error("User id is required");
     }
 
+    const mentorProfile = await Profile.findOne({ userId: mentorId });
+
+    if (!mentorProfile) {
+      throw new Error("Mentor not found");
+    }
+
     const profile = await Profile.findOneAndUpdate(
       { userId },
-      { "assigned.mentor": mentorId },
+      { "assigned.mentor": mentorProfile._id },
       { new: true }
     );
 
@@ -84,9 +90,15 @@ export const assignCoach = async (req, res, next) => {
       throw new Error("User id is required");
     }
 
+    const coachProfile = await Profile.findOne({ userId: coachId });
+
+    if (!coachProfile) {
+      throw new Error("Coach not found");
+    }
+
     const profile = await Profile.findOneAndUpdate(
       { userId },
-      { "assigned.coach": coachId },
+      { "assigned.coach": coachProfile._id },
       { new: true }
     );
 
