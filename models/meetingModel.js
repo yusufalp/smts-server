@@ -2,17 +2,12 @@ import { Schema, model } from "mongoose";
 
 const meetingSchema = new Schema(
   {
-    title: { type: String },
-    userId: { type: Schema.Types.ObjectId, ref: "Profile" },
-    date: { type: Date },
-    duration: { type: Number },
-    participants: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
-    notes: [
-      {
-        by: { type: Schema.Types.ObjectId, ref: "Profile" },
-        note: { type: String },
-      },
-    ],
+    title: { type: String, required: true },
+    learner: { type: Schema.Types.ObjectId, ref: "Profile", required: true },
+    advisor: { type: Schema.Types.ObjectId, ref: "Profile", required: true },
+    date: { type: Date, required: true },
+    duration: { type: Number, required: true },
+    note: { type: String },
   },
   { timestamps: true }
 );
