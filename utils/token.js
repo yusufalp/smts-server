@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export function generateToken(user, tokenType) {
   // Expiration is 1d by default except if it is a refresh token
-  const expiresIn = tokenType === "refresh" ? "30d" : "1d";
+  const expiresIn = tokenType === "refresh" ? "30d" : "8h";
 
   const tokenUser = JSON.parse(JSON.stringify(user));
   const { password, ...userWithoutPassword } = tokenUser;
