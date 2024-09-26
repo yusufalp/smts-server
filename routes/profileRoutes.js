@@ -5,6 +5,7 @@ import {
   getAssignedAdvisors,
   getAssignedMentees,
   getProfileByUserId,
+  getProfilesByRole,
   updateAddress,
   updateEmail,
   updateLinks,
@@ -20,6 +21,8 @@ router.get("/advisors", getAssignedAdvisors);
 router.get("/mentees", getAssignedMentees);
 
 router.get("/:userId", getProfileByUserId);
+router.get("/", getProfilesByRole);
+
 
 router.post("/update-email", updateEmail);
 router.post("/update-address", updateAddress);

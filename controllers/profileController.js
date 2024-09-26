@@ -36,13 +36,12 @@ export const getAssignedMentees = async (req, res, next) => {
 
     const profile = await Profile.findOne({ userId }, "_id");
 
-    console.log('profile :>> ', profile);
-
     if (!profile) {
       throw new Error("Profile not found");
     }
 
     const mentees = await Profile.find({
+      status: "active",
       $or: [
         { "assigned.mentor": profile._id },
         { "assigned.coach": profile._id },
@@ -79,6 +78,38 @@ export const getProfileByUserId = async (req, res, next) => {
     res.status(200).json({
       success: { message: "Profile found successfully" },
       data: { profile },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProfilesByRole = async (req, res, next) => {
+  const { field = "", role } = req.query;
+
+  try {
+    if (!role) {
+      throw new Error("Role is required");
+    }
+
+    let profiles;
+
+    if (role === "advisor") {
+      profiles = await Profile.find(
+        { $or: [{ role: "mentor" }, { role: "coach" }] },
+        field
+      );
+    } else {
+      profiles = await Profile.find({ role }, field);
+    }
+
+    if (!profiles) {
+      throw new Error("Profile by role not found");
+    }
+
+    res.status(200).json({
+      success: { message: "Profiles by role found" },
+      data: { profiles },
     });
   } catch (error) {
     next(error);
