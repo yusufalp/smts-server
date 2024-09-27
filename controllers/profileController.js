@@ -1,12 +1,14 @@
 import Profile from "../models/profileModel.js";
 
+import CustomError from "../utils/CustomError.js";
+
 export const getAssignedAdvisors = async (req, res, next) => {
   const userId = req.user._id;
   const field = req.query.field || "name";
 
   try {
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     const advisors = await Profile.findOne({ userId }, "assigned")
@@ -14,10 +16,10 @@ export const getAssignedAdvisors = async (req, res, next) => {
       .populate("assigned.coach", field);
 
     if (!advisors) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Advisors populated successfully" },
       data: advisors,
     });
@@ -31,13 +33,13 @@ export const getAssignedMentees = async (req, res, next) => {
 
   try {
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     const profile = await Profile.findOne({ userId }, "_id");
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
     const mentees = await Profile.find({
@@ -49,10 +51,10 @@ export const getAssignedMentees = async (req, res, next) => {
     });
 
     if (!mentees) {
-      throw new Error("Mentees not found");
+      throw new CustomError("Mentees not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Mentees retrieved successfully" },
       data: { mentees },
     });
@@ -66,16 +68,16 @@ export const getProfileByUserId = async (req, res, next) => {
 
   try {
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     const profile = await Profile.findOne({ userId });
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 400);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Profile found successfully" },
       data: { profile },
     });
@@ -89,7 +91,7 @@ export const getProfilesByRole = async (req, res, next) => {
 
   try {
     if (!role) {
-      throw new Error("Role is required");
+      throw new CustomError("Role is required", 400);
     }
 
     let profiles;
@@ -104,10 +106,10 @@ export const getProfilesByRole = async (req, res, next) => {
     }
 
     if (!profiles) {
-      throw new Error("Profile by role not found");
+      throw new CustomError("Profile by role not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Profiles by role found" },
       data: { profiles },
     });
@@ -123,11 +125,11 @@ export const updateEmail = async (req, res, next) => {
 
   try {
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     if (!email) {
-      throw new Error("Email is required");
+      throw new CustomError("Email is required", 400);
     }
 
     const profile = await Profile.findOneAndUpdate(
@@ -137,10 +139,10 @@ export const updateEmail = async (req, res, next) => {
     );
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Email updated successfully" },
       data: { profile },
     });
@@ -172,10 +174,10 @@ export const updateAddress = async (req, res, next) => {
     );
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Address updated successfully" },
       data: { profile },
     });
@@ -203,10 +205,10 @@ export const updateLinks = async (req, res, next) => {
     );
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Links updated successfully" },
       data: { profile },
     });

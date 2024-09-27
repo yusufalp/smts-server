@@ -1,5 +1,6 @@
 import Meeting from "../models/meetingModel.js";
 import Profile from "../models/profileModel.js";
+import CustomError from "../utils/CustomError.js";
 
 export const createMeeting = async (req, res, next) => {
   const { title, advisor, date, time, duration, notes } = req.body;
@@ -11,13 +12,13 @@ export const createMeeting = async (req, res, next) => {
 
   try {
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     const profile = await Profile.findOne({ userId }, "_id");
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
     const learner = profile._id;
@@ -33,7 +34,7 @@ export const createMeeting = async (req, res, next) => {
 
     await newMeeting.save();
 
-    res.status(200).json({
+    return res.status(201).json({
       status: { message: "A new meeting is created" },
       data: { meeting: newMeeting },
     });
@@ -48,13 +49,13 @@ export const getMeetingsWith = async (req, res, next) => {
 
   try {
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     const profile = await Profile.findOne({ userId });
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
     let meetings;
@@ -70,7 +71,7 @@ export const getMeetingsWith = async (req, res, next) => {
         "title date duration advisor"
       ).populate("advisor", "name");
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Meetings retrieved" },
       data: { meetings },
     });

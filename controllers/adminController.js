@@ -2,11 +2,13 @@ import Meeting from "../models/meetingModel.js";
 import Profile from "../models/profileModel.js";
 import User from "../models/userModel.js";
 
+import CustomError from "../utils/CustomError.js";
+
 export const getAllMeetings = async (req, res, next) => {
   try {
     const allMeetings = await Meeting.find();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "All meetings retrieved successfully" },
       data: { allMeetings },
     });
@@ -19,7 +21,7 @@ export const getAllProfiles = async (req, res, next) => {
   try {
     const allProfiles = await Profile.find();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "All profiles is successfully retrieved" },
       data: { allProfiles },
     });
@@ -32,7 +34,7 @@ export const getAllUsers = async (req, res, next) => {
   try {
     const allUsers = await User.find();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "All users retrieved successfully" },
       data: { allUsers },
     });
@@ -46,17 +48,17 @@ export const assignMentor = async (req, res, next) => {
 
   try {
     if (!mentorId) {
-      throw new Error("Mentor id is required");
+      throw new CustomError("Mentor id is required", 400);
     }
 
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     const mentorProfile = await Profile.findOne({ userId: mentorId });
 
     if (!mentorProfile) {
-      throw new Error("Mentor not found");
+      throw new CustomError("Mentor not found", 404);
     }
 
     const profile = await Profile.findOneAndUpdate(
@@ -66,10 +68,10 @@ export const assignMentor = async (req, res, next) => {
     );
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Mentor updated successfully" },
       data: { profile },
     });
@@ -83,17 +85,17 @@ export const assignCoach = async (req, res, next) => {
 
   try {
     if (!coachId) {
-      throw new Error("Coach id is required");
+      throw new CustomError("Coach id is required", 400);
     }
 
     if (!userId) {
-      throw new Error("User id is required");
+      throw new CustomError("User id is required", 400);
     }
 
     const coachProfile = await Profile.findOne({ userId: coachId });
 
     if (!coachProfile) {
-      throw new Error("Coach not found");
+      throw new CustomError("Coach not found", 404);
     }
 
     const profile = await Profile.findOneAndUpdate(
@@ -103,10 +105,10 @@ export const assignCoach = async (req, res, next) => {
     );
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Coach updated successfully" },
       data: { profile },
     });
@@ -128,10 +130,10 @@ export const updateRole = async (req, res, next) => {
     );
 
     if (!profile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
-    res.status(201).json({
+    return res.status(201).json({
       success: { message: "User role is updated successfully" },
       data: { profile },
     });
