@@ -6,11 +6,13 @@ const tokenConfig = {
 };
 
 export function generateJwtToken(user, type = "access") {
-  const { password, ...userWithoutPassword } = user;
-
   const config = tokenConfig[type] || tokenConfig.access;
 
-  return jwt.sign(userWithoutPassword, process.env.JWT_SECRET, config);
+  return jwt.sign(
+    { _id: user._id, username: user.username },
+    process.env.JWT_SECRET,
+    config
+  );
 }
 
 export function decodeJwtToken(token) {
