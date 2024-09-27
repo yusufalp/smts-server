@@ -1,5 +1,4 @@
 import "dotenv/config";
-import "./config/database.js";
 
 import express from "express";
 import helmet from "helmet";
@@ -12,13 +11,17 @@ import meetingRoutes from "./routes/meetingRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
+import connectDB from "./config/database.js";
+
 const app = express();
 
+connectDB();
+
 app.use(helmet());
-app.use(morgan("dev"));
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
   })
 );
@@ -50,7 +53,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
