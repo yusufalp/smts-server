@@ -6,7 +6,7 @@ import CustomError from "../utils/CustomError.js";
 
 export const getAllMeetings = async (req, res, next) => {
   try {
-    const allMeetings = await Meeting.find();
+    const allMeetings = await Meeting.find().lean();
 
     return res.status(200).json({
       success: { message: "All meetings retrieved successfully" },
@@ -19,7 +19,7 @@ export const getAllMeetings = async (req, res, next) => {
 
 export const getAllProfiles = async (req, res, next) => {
   try {
-    const allProfiles = await Profile.find();
+    const allProfiles = await Profile.find().lean();
 
     return res.status(200).json({
       success: { message: "All profiles is successfully retrieved" },
@@ -32,7 +32,7 @@ export const getAllProfiles = async (req, res, next) => {
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const allUsers = await User.find();
+    const allUsers = await User.find().lean();
 
     return res.status(200).json({
       success: { message: "All users retrieved successfully" },
