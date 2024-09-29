@@ -4,11 +4,11 @@ import CustomError from "../utils/CustomError.js";
 export const getUserById = async (req, res, next) => {
   const { _id } = req.params;
 
-  if (_id) {
-    throw new CustomError("Id is required", 400);
-  }
-
   try {
+    if (_id) {
+      throw new CustomError("Id is required", 400);
+    }
+
     const user = await User.findById(_id);
 
     if (!user) {
