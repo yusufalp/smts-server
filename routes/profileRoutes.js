@@ -2,13 +2,11 @@ import express from "express";
 
 import { authenticateToken } from "../middlewares/authenticateToken.js";
 import {
-  getAssignedAdvisors,
-  getAssignedMentees,
   getProfileByUserId,
   getProfilesByRole,
-  updateAddress,
-  updateEmail,
-  updateLinks,
+  getAssignedAdvisors,
+  getAssignedMentees,
+  updateProfileField,
 } from "../controllers/profileController.js";
 
 const router = express.Router();
@@ -17,15 +15,13 @@ const router = express.Router();
 
 router.use(authenticateToken);
 
-router.get("/advisors", getAssignedAdvisors);
-router.get("/mentees", getAssignedMentees);
+router.get("/profile", getProfilesByRole);
+
+router.get("/assigned/advisors", getAssignedAdvisors);
+router.get("/assigned/mentees", getAssignedMentees);
 
 router.get("/:userId", getProfileByUserId);
-router.get("/", getProfilesByRole);
 
-
-router.post("/update-email", updateEmail);
-router.post("/update-address", updateAddress);
-router.post("/update-links", updateLinks);
+router.patch("/profile", updateProfileField);
 
 export default router;
