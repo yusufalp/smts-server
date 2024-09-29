@@ -32,11 +32,11 @@ const profileSchema = new Schema(
       mentor: { type: Schema.Types.ObjectId, ref: "Profile", default: null },
       coach: { type: Schema.Types.ObjectId, ref: "Profile", default: null },
     },
-    cohort: { type: Number },
     // * active, inactive, graduated
     status: { type: String, default: "active" },
-    // * admin, mentor, coach, mentee, alumni
+    // * admin, mentor, coach, mentee, alumni, guest
     role: { type: String, default: "mentee" },
+    cohort: { type: Number },
     graduation: { type: Date },
   },
   { timestamps: true }
