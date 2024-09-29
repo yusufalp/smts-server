@@ -26,10 +26,10 @@ export const createMeeting = async (req, res, next) => {
     const newMeeting = new Meeting({
       title,
       learner,
+      advisor,
       date: dateISO,
       duration,
-      advisor,
-      notes: { by: userId, note: notes },
+      notes: { by: learner, note: notes },
     });
 
     await newMeeting.save();
@@ -43,9 +43,8 @@ export const createMeeting = async (req, res, next) => {
   }
 };
 
-export const getMeetingsWith = async (req, res, next) => {
+export const getMeetings = async (req, res, next) => {
   const userId = req.user._id;
-  const role = req.query.role;
 
   try {
     if (!userId) {
@@ -57,22 +56,29 @@ export const getMeetingsWith = async (req, res, next) => {
     if (!profile) {
       throw new CustomError("Profile not found", 404);
     }
+    const role = profile.role;
 
-    let meetings;
+    const filter = {
+      mentor: { advisor: profile._id },
+      coach: { advisor: profile._id },
+      mentee: { learner: profile._id },
+    };
 
-    if (role === "mentor" || role === "coach") {
-      meetings = await Meeting.find(
-        { advisor: profile._id },
-        "title date duration learner"
-      ).populate("learner", "name");
-    } else
-      meetings = await Meeting.find(
-        { learner: profile._id },
-        "title date duration advisor"
-      ).populate("advisor", "name");
+    if (!filter[role]) {
+      throw new CustomError(`Invalid role: ${role}`, 400);
+    }
+
+    const meetings = await Meeting.find(filter[profile.role])
+      .populate("learner", "name")
+      .populate("advisor", "name")
+      .lean();
+
+    if (!meetings.length) {
+      throw new CustomError("Meetings not found", 404);
+    }
 
     return res.status(200).json({
-      success: { message: "Meetings retrieved" },
+      success: { message: "Meetings found" },
       data: { meetings },
     });
   } catch (error) {
