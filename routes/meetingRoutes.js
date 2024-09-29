@@ -1,8 +1,8 @@
 import express from "express";
 
 import {
-  getMeetingsWith,
   createMeeting,
+  getMeetings,
 } from "../controllers/meetingController.js";
 
 import { authenticateToken } from "../middlewares/authenticateToken.js";
@@ -13,8 +13,9 @@ const router = express.Router();
 
 router.use(authenticateToken);
 
-router.get("/with", getMeetingsWith);
-
 router.post("/", createMeeting);
+
+router.get("/", getMeetings);
+
 
 export default router;
