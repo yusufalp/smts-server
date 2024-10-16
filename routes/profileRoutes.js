@@ -4,24 +4,27 @@ import { authenticateToken } from "../middlewares/authenticateToken.js";
 import {
   getAssignedAdvisors,
   getAssignedMentees,
-  getProfilesByRole,
+  getAssignedMenteeById,
+  getAdvisors,
   getProfileByUserId,
-  updateProfileField,
+  updateProfile,
 } from "../controllers/profileController.js";
+import { authorizeAdvisor } from "../middlewares/authorizeAdmin.js";
 
 const router = express.Router();
 
-// http://localhost:8080/api/profiles
-
+// Protect all routes with token authentication
 router.use(authenticateToken);
 
-
+router.get("/advisors", getAdvisors);
 router.get("/assigned/advisors", getAssignedAdvisors);
 router.get("/assigned/mentees", getAssignedMentees);
+router.get("/assigned/mentees/:_id", getAssignedMenteeById);
 
-router.get("/profile", getProfilesByRole);
+router.patch("/profile", updateProfile);
+
+// Only advisors (mentors/coaches) can access specific user profiles
+router.use(authorizeAdvisor);
 router.get("/:userId", getProfileByUserId);
-
-router.patch("/profile", updateProfileField);
 
 export default router;

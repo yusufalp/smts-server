@@ -3,9 +3,6 @@ import CustomError from "../utils/CustomError.js";
 
 export const getAssignedAdvisors = async (req, res, next) => {
   const userId = req.user._id;
-  // ? if no field is provided, is it undefined or empty string
-  // ? Do you want to assign a default value of name? Anything at all?
-  const field = req.query.field || "name";
 
   try {
     if (!userId) {
@@ -13,8 +10,8 @@ export const getAssignedAdvisors = async (req, res, next) => {
     }
 
     const advisors = await Profile.findOne({ userId }, "assigned")
-      .populate("assigned.mentor", field)
-      .populate("assigned.coach", field)
+      .populate("assigned.mentor", "name")
+      .populate("assigned.coach", "name")
       .lean();
 
     if (!advisors) {
@@ -65,30 +62,43 @@ export const getAssignedMentees = async (req, res, next) => {
   }
 };
 
-export const getProfilesByRole = async (req, res, next) => {
-  const { role, field = "" } = req.query;
+export const getAssignedMenteeById = async (req, res, next) => {
+  const { _id } = req.params;
 
   try {
-    if (!role) {
-      throw new CustomError("Role is required", 400);
+    if (!_id) {
+      throw new CustomError("Mentee id is required", 400);
     }
 
-    const roleConditions = {
-      advisor: { $or: [{ role: "mentor" }, { role: "coach" }] },
-      learner: { $or: [{ role: "mentee" }, { role: "alumni" }] },
-    };
+    const mentee = await Profile.findById(_id);
 
-    const queryCondition = roleConditions[role] || { role };
+    if (!mentee) {
+      throw new CustomError("Mentee not found", 401);
+    }
 
-    const profiles = await Profile.find(queryCondition, field).lean();
+    res.status(200).json({
+      success: { message: "Mentee found" },
+      data: { mentee },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-    if (!profiles.length) {
-      throw new CustomError(`Profiles with ${role} role not found`, 404);
+export const getAdvisors = async (req, res, next) => {
+  try {
+    const advisors = await Profile.find(
+      { $or: [{ role: "mentor" }, { role: "coach" }] },
+      "name"
+    ).lean();
+
+    if (!advisors.length) {
+      throw new CustomError(`There are no advisors in your organization`, 404);
     }
 
     return res.status(200).json({
-      success: { message: "Profiles by role found" },
-      data: { profiles },
+      success: { message: "Advisors found" },
+      data: { advisors },
     });
   } catch (error) {
     next(error);
@@ -118,7 +128,7 @@ export const getProfileByUserId = async (req, res, next) => {
   }
 };
 
-export const updateProfileField = async (req, res, next) => {
+export const updateProfile = async (req, res, next) => {
   const userId = req.user._id;
 
   const { field, value } = req.body;
