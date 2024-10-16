@@ -1,59 +1,6 @@
 import Profile from "../models/profileModel.js";
 import CustomError from "../utils/CustomError.js";
 
-export const getProfileByUserId = async (req, res, next) => {
-  const { userId } = req.params;
-
-  try {
-    if (!userId) {
-      throw new CustomError("User id is required", 400);
-    }
-
-    const profile = await Profile.findOne({ userId }).lean();
-
-    if (!profile) {
-      throw new CustomError("Profile not found", 404);
-    }
-
-    return res.status(200).json({
-      success: { message: "Profile found successfully" },
-      data: { profile },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getProfilesByRole = async (req, res, next) => {
-  const { role, field = "" } = req.query;
-
-  try {
-    if (!role) {
-      throw new CustomError("Role is required", 400);
-    }
-
-    const roleConditions = {
-      advisor: { $or: [{ role: "mentor" }, { role: "coach" }] },
-      learner: { $or: [{ role: "mentee" }, { role: "alumni" }] },
-    };
-
-    const queryCondition = roleConditions[role] || { role };
-
-    const profiles = await Profile.find(queryCondition, field).lean();
-
-    if (!profiles.length) {
-      throw new CustomError(`Profiles with ${role} role not found`, 404);
-    }
-
-    return res.status(200).json({
-      success: { message: "Profiles by role found" },
-      data: { profiles },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const getAssignedAdvisors = async (req, res, next) => {
   const userId = req.user._id;
   // ? if no field is provided, is it undefined or empty string
@@ -118,6 +65,59 @@ export const getAssignedMentees = async (req, res, next) => {
   }
 };
 
+export const getProfilesByRole = async (req, res, next) => {
+  const { role, field = "" } = req.query;
+
+  try {
+    if (!role) {
+      throw new CustomError("Role is required", 400);
+    }
+
+    const roleConditions = {
+      advisor: { $or: [{ role: "mentor" }, { role: "coach" }] },
+      learner: { $or: [{ role: "mentee" }, { role: "alumni" }] },
+    };
+
+    const queryCondition = roleConditions[role] || { role };
+
+    const profiles = await Profile.find(queryCondition, field).lean();
+
+    if (!profiles.length) {
+      throw new CustomError(`Profiles with ${role} role not found`, 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Profiles by role found" },
+      data: { profiles },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProfileByUserId = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    if (!userId) {
+      throw new CustomError("User id is required", 400);
+    }
+
+    const profile = await Profile.findOne({ userId }).lean();
+
+    if (!profile) {
+      throw new CustomError("Profile not found", 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Profile found successfully" },
+      data: { profile },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateProfileField = async (req, res, next) => {
   const userId = req.user._id;
 
@@ -150,6 +150,14 @@ export const updateProfileField = async (req, res, next) => {
         portfolio: value.portfolio,
         linkedin: value.linkedin,
         github: value.github,
+      };
+    } else if (field === "name") {
+      if (!first) {
+        throw new CustomError("First name is required", 400);
+      }
+      updateData[field] = {
+        first: value.first,
+        last: value.last,
       };
     } else {
       updateData[field] = value;
