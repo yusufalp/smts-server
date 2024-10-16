@@ -3,6 +3,8 @@ import Profile from "../models/profileModel.js";
 import User from "../models/userModel.js";
 
 import CustomError from "../utils/CustomError.js";
+import { ROLES } from "../enums/role.js";
+import { STATUS } from "../enums/status.js";
 
 export const getAllMeetings = async (req, res, next) => {
   try {
@@ -43,36 +45,53 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
-export const assignMentor = async (req, res, next) => {
-  const { mentorId, userId } = req.body;
+export const updateAdvisor = async (req, res, next) => {
+  const { advisorId, userId } = req.body;
 
   try {
-    if (!mentorId) {
-      throw new CustomError("Mentor id is required", 400);
+    if (!advisorId) {
+      throw new CustomError("Advisor id is required", 400);
     }
 
     if (!userId) {
       throw new CustomError("User id is required", 400);
     }
 
-    const mentorProfile = await Profile.findOne({ userId: mentorId });
+    const advisorProfile = await Profile.findOne(
+      { userId: advisorId },
+      "_id role"
+    );
 
-    if (!mentorProfile) {
-      throw new CustomError("Mentor not found", 404);
+    if (!advisorProfile) {
+      throw new CustomError("Advisor not found", 404);
     }
 
-    const profile = await Profile.findOneAndUpdate(
-      { userId },
-      { "assigned.mentor": mentorProfile._id },
-      { new: true }
-    );
+    const advisorRole = advisorProfile.role;
+
+    if (
+      ROLES[advisorRole].key !== "mentor" &&
+      ROLES[advisorRole].key !== "coach"
+    ) {
+      throw new CustomError("Person is not an advisor", 400);
+    }
+
+    const advisorConfig = {
+      mentor: { "assigned.mentor": advisorProfile._id },
+      coach: { "assigned.coach": advisorProfile._id },
+    };
+
+    const updateData = advisorConfig[advisorRole];
+
+    const profile = await Profile.findOneAndUpdate({ userId }, updateData, {
+      new: true,
+    });
 
     if (!profile) {
       throw new CustomError("Profile not found", 404);
     }
 
     return res.status(200).json({
-      success: { message: "Mentor updated successfully" },
+      success: { message: "Advisor updated successfully" },
       data: { profile },
     });
   } catch (error) {
@@ -80,70 +99,43 @@ export const assignMentor = async (req, res, next) => {
   }
 };
 
-export const assignCoach = async (req, res, next) => {
-  const { coachId, userId } = req.body;
+export const updateProfileField = async (req, res, next) => {
+  const { userId, field, value } = req.body;
 
   try {
-    if (!coachId) {
-      throw new CustomError("Coach id is required", 400);
-    }
-
     if (!userId) {
       throw new CustomError("User id is required", 400);
     }
 
-    const coachProfile = await Profile.findOne({ userId: coachId });
-
-    if (!coachProfile) {
-      throw new CustomError("Coach not found", 404);
+    if (!field || !value) {
+      throw new CustomError("Field and its value is required", 400);
     }
 
-    const profile = await Profile.findOneAndUpdate(
-      { userId },
-      { "assigned.coach": coachProfile._id },
-      { new: true }
-    );
+    if (field === "status") {
+      if (!STATUS[value]) {
+        throw new CustomError("Invalid status value", 400);
+      }
+    } else if (field === "role") {
+      if (!ROLES[value]) {
+        throw new CustomError("Invalid role value", 400);
+      }
+    }
+
+    const updateData = { [field]: value };
+
+    const profile = await Profile.findOneAndUpdate({ userId }, updateData, {
+      new: true,
+    });
 
     if (!profile) {
       throw new CustomError("Profile not found", 404);
     }
 
     return res.status(200).json({
-      success: { message: "Coach updated successfully" },
+      success: { message: `${field} updated successfully` },
       data: { profile },
     });
   } catch (error) {
     next(error);
   }
 };
-
-export const updateRole = async (req, res, next) => {
-  const { newRole, userId } = req.body;
-
-  // TODO: add more validations here
-
-  try {
-    const profile = await Profile.findOneAndUpdate(
-      { userId },
-      { role: newRole },
-      { new: true }
-    );
-
-    if (!profile) {
-      throw new CustomError("Profile not found", 404);
-    }
-
-    return res.status(201).json({
-      success: { message: "User role is updated successfully" },
-      data: { profile },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const updateCohort = (req, res, next) => {};
-
-export const updateStatus = (req, res, next) => {};
-
-export const updateGraduation = (req, res, next) => {};
