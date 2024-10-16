@@ -6,15 +6,13 @@ import {
   getAllMeetings,
   getAllProfiles,
   getAllUsers,
-  assignMentor,
-  assignCoach,
-  updateRole,
-  updateCohort,
-  updateStatus,
-  updateGraduation,
+  updateAdvisor,
+  updateProfileField,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
+
+// http://localhost:8080/api/admin
 
 router.use(authenticateToken);
 router.use(authorizeAdmin);
@@ -24,12 +22,8 @@ router.get("/meetings", getAllMeetings);
 router.get("/profiles", getAllProfiles);
 router.get("/users", getAllUsers);
 
-router.post("/assign-mentor", assignMentor);
-router.post("/assign-coach", assignCoach);
+router.post("/advisor", updateAdvisor);
 
-router.post("/update-role", updateRole);
-router.post("/update-cohort", updateCohort);
-router.post("/update-status", updateStatus);
-router.post("/update-graduation", updateGraduation);
+router.post("/profile", updateProfileField);
 
 export default router;
