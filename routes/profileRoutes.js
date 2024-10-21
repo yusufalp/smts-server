@@ -19,7 +19,7 @@ router.use(authenticateToken);
 router.get("/advisors", getAdvisors);
 router.get("/assigned/advisors", getAssignedAdvisors);
 router.get("/assigned/mentees", getAssignedMentees);
-router.get("/assigned/mentees/:_id", getAssignedMenteeById);
+router.get("/assigned/mentee/:_id", getAssignedMenteeById);
 
 router.patch("/profile", updateProfile);
 
