@@ -85,3 +85,29 @@ export const getMeetings = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getMeetingById = async (req, res, next) => {
+  const { meetingId } = req.params;
+
+  try {
+    if (!meetingId) {
+      throw new CustomError("Meeting id is required", 400);
+    }
+
+    const meeting = await Meeting.findById(meetingId)
+      .populate("learner", "name")
+      .populate("advisor", "name")
+      .lean();
+
+    if (!meeting) {
+      throw new CustomError("Meeting not found", 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Meeting is found" },
+      data: { meeting },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

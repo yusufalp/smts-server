@@ -2,12 +2,12 @@ import express from "express";
 
 import { authenticateToken } from "../middlewares/authenticateToken.js";
 import {
+  getAdvisors,
   getAssignedAdvisors,
   getAssignedMentees,
   getAssignedMenteeById,
-  getAdvisors,
-  getProfileByUserId,
   updateProfile,
+  getProfileByUserId,
 } from "../controllers/profileController.js";
 import { authorizeAdvisor } from "../middlewares/authorizeAdmin.js";
 
