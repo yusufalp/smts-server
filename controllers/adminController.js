@@ -2,17 +2,45 @@ import Meeting from "../models/meetingModel.js";
 import Profile from "../models/profileModel.js";
 import User from "../models/userModel.js";
 
+import { ROLES } from "../enums/roles.js";
+import { STATUSES } from "../enums/statuses.js";
+
 import CustomError from "../utils/CustomError.js";
-import { ROLES } from "../enums/role.js";
-import { STATUS } from "../enums/status.js";
 
 export const getAllMeetings = async (req, res, next) => {
+  const { title, learner, advisor, date } = req.query;
+
+  const filters = {};
+
+  if (title) {
+    filters.title = title;
+  }
+
+  if (learner) {
+    filters.learner = learner;
+  }
+
+  if (advisor) {
+    filters.advisor = advisor;
+  }
+
+  if (date) {
+    filters.date = date;
+  }
+
   try {
-    const allMeetings = await Meeting.find().lean();
+    const meetings = await Meeting.find(filters)
+      .populate("learner", "name")
+      .populate("advisor", "name")
+      .lean();
+
+    if (!meetings) {
+      throw new CustomError("No meetings found", 404);
+    }
 
     return res.status(200).json({
       success: { message: "All meetings retrieved successfully" },
-      data: { allMeetings },
+      data: { meetings },
     });
   } catch (error) {
     next(error);
@@ -20,12 +48,24 @@ export const getAllMeetings = async (req, res, next) => {
 };
 
 export const getAllProfiles = async (req, res, next) => {
+  const { status } = req.query;
+
+  const filters = {};
+
+  if (status && status !== "all") {
+    filters.status = STATUSES[status].key;
+  }
+
   try {
-    const allProfiles = await Profile.find().lean();
+    const profiles = await Profile.find(filters).lean();
+
+    if (!profiles) {
+      throw new CustomError("No profiles found", 404);
+    }
 
     return res.status(200).json({
       success: { message: "All profiles is successfully retrieved" },
-      data: { allProfiles },
+      data: { profiles },
     });
   } catch (error) {
     next(error);
@@ -34,11 +74,11 @@ export const getAllProfiles = async (req, res, next) => {
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const allUsers = await User.find().lean();
+    const users = await User.find().lean();
 
     return res.status(200).json({
       success: { message: "All users retrieved successfully" },
-      data: { allUsers },
+      data: { users },
     });
   } catch (error) {
     next(error);
@@ -112,7 +152,7 @@ export const updateProfileField = async (req, res, next) => {
     }
 
     if (field === "status") {
-      if (!STATUS[value]) {
+      if (!STATUSES[value]) {
         throw new CustomError("Invalid status value", 400);
       }
     } else if (field === "role") {
