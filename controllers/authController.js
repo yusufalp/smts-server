@@ -6,10 +6,10 @@ import { decodeJwtToken, generateJwtToken } from "../utils/jwtUtils.js";
 import CustomError from "../utils/CustomError.js";
 
 export const signupUser = async (req, res, next) => {
-  const { first, last, email, username, password } = req.body;
+  const { first, last, username, password } = req.body;
 
   try {
-    if (!first || !email || !username || !password) {
+    if (!first || !username || !password) {
       throw new CustomError("Missing required fields", 400);
     }
 
@@ -27,7 +27,6 @@ export const signupUser = async (req, res, next) => {
     const newProfile = new Profile({
       userId: newUser._id,
       name: { first, last },
-      email,
     });
 
     await newProfile.save();
