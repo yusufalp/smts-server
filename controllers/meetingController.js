@@ -29,7 +29,7 @@ export const createMeeting = async (req, res, next) => {
       advisor,
       date: dateISO,
       duration,
-      notes: { by: learner, note: notes },
+      notes,
     });
 
     await newMeeting.save();

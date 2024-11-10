@@ -7,7 +7,7 @@ const meetingSchema = new Schema(
     advisor: { type: Schema.Types.ObjectId, ref: "Profile", required: true },
     date: { type: Date, required: true },
     duration: { type: Number, required: true },
-    note: { type: String },
+    notes: { type: String },
   },
   { timestamps: true }
 );
