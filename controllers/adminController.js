@@ -8,7 +8,7 @@ import { STATUSES } from "../enums/statuses.js";
 import CustomError from "../utils/CustomError.js";
 
 export const getAllMeetings = async (req, res, next) => {
-  const { title, learner, advisor, date } = req.query;
+  const { title, learner, advisor, date, page = 1, limit = 5 } = req.query;
 
   const filters = {};
 
@@ -28,8 +28,13 @@ export const getAllMeetings = async (req, res, next) => {
     filters.date = date;
   }
 
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const pageSize = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 100);
+
   try {
     const meetings = await Meeting.find(filters)
+      .skip((pageNum - 1) * pageSize)
+      .limit(pageSize)
       .populate("learner", "name")
       .populate("advisor", "name")
       .lean();
@@ -38,9 +43,19 @@ export const getAllMeetings = async (req, res, next) => {
       throw new CustomError("No meetings found", 404);
     }
 
+    const totalCount = await Meeting.countDocuments(filters);
+
     return res.status(200).json({
       success: { message: "All meetings retrieved successfully" },
-      data: { meetings },
+      data: {
+        meetings,
+        pagination: {
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          currentPage: pageNum,
+          pageSize,
+        },
+      },
     });
   } catch (error) {
     next(error);
@@ -48,24 +63,44 @@ export const getAllMeetings = async (req, res, next) => {
 };
 
 export const getAllProfiles = async (req, res, next) => {
-  const { status } = req.query;
+  const { status, page = 1, limit = 5 } = req.query;
 
   const filters = {};
 
   if (status && status !== "all") {
-    filters.status = STATUSES[status].key;
+    if (STATUSES[status]) {
+      filters.status = STATUSES[status].key;
+    } else {
+      throw new CustomError(`Invalid status value`, 400);
+    }
   }
 
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const pageSize = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 100);
+
   try {
-    const profiles = await Profile.find(filters).lean();
+    const profiles = await Profile.find(filters)
+      .skip((pageNum - 1) * pageSize)
+      .limit(pageSize)
+      .lean();
 
     if (!profiles) {
       throw new CustomError("No profiles found", 404);
     }
 
+    const totalCount = await Profile.countDocuments(filters);
+
     return res.status(200).json({
       success: { message: "All profiles is successfully retrieved" },
-      data: { profiles },
+      data: {
+        profiles,
+        pagination: {
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          currentPage: pageNum,
+          pageSize,
+        },
+      },
     });
   } catch (error) {
     next(error);
