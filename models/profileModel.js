@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const profileSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    userId: { type: Schema.Types.ObjectId, ref: "User", unique: true },
     name: {
       first: {
         type: String,
@@ -12,7 +12,7 @@ const profileSchema = new Schema(
         type: String,
       },
     },
-    email: { type: String },
+    email: { type: String, unique: true },
     address: {
       street: {
         line1: { type: String },
