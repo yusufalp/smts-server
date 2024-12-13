@@ -4,7 +4,7 @@ import CustomError from "../utils/CustomError.js";
 
 export const createMeeting = async (req, res, next) => {
   const { title, advisor, date, time, duration, notes } = req.body;
-  const userId = req.user._id;
+  const { userId } = req.user;
 
   const dateISO = new Date(`${date} ${time}`);
 
@@ -44,7 +44,7 @@ export const createMeeting = async (req, res, next) => {
 };
 
 export const getMeetings = async (req, res, next) => {
-  const userId = req.user._id;
+  const { userId } = req.user;
 
   try {
     if (!userId) {
