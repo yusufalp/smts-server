@@ -1,11 +1,8 @@
 import Meeting from "../models/meetingModel.js";
 import Profile from "../models/profileModel.js";
-import User from "../models/userModel.js";
-
+import CustomError from "../utils/CustomError.js";
 import { ROLES } from "../enums/roles.js";
 import { STATUSES } from "../enums/statuses.js";
-
-import CustomError from "../utils/CustomError.js";
 
 export const getAllMeetings = async (req, res, next) => {
   const { title, learner, advisor, date, page = 1, limit = 5 } = req.query;
@@ -101,19 +98,6 @@ export const getAllProfiles = async (req, res, next) => {
           pageSize,
         },
       },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getAllUsers = async (req, res, next) => {
-  try {
-    const users = await User.find().lean();
-
-    return res.status(200).json({
-      success: { message: "All users retrieved successfully" },
-      data: { users },
     });
   } catch (error) {
     next(error);
