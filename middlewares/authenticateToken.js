@@ -1,4 +1,4 @@
-import { decodeJwtToken } from "../utils/token";
+import { decodeJwtToken } from "../utils/token.js";
 
 export function authenticateToken(req, res, next) {
   try {
