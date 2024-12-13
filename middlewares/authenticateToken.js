@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import { decodeJwtToken } from "../utils/token";
 
 export function authenticateToken(req, res, next) {
   try {
@@ -8,15 +8,10 @@ export function authenticateToken(req, res, next) {
       throw new Error("Token is missing");
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) {
-        throw new Error(err);
-      }
+    const user = decodeJwtToken(token);
+    req.user = user;
 
-      req.user = user;
-
-      next();
-    });
+    next();
   } catch (error) {
     next(error);
   }
