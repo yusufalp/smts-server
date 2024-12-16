@@ -48,7 +48,7 @@ export const getAdvisors = async (req, res, next) => {
 };
 
 export const getAssignedAdvisors = async (req, res, next) => {
-  const userId  = req.user._id;
+  const userId = req.user._id;
 
   try {
     if (!userId) {
@@ -97,7 +97,7 @@ export const getAssignedMenteeById = async (req, res, next) => {
 };
 
 export const getAssignedMentees = async (req, res, next) => {
-  const userId  = req.user._id;
+  const userId = req.user._id;
 
   try {
     if (!userId) {
@@ -132,7 +132,7 @@ export const getAssignedMentees = async (req, res, next) => {
 };
 
 export const getProfileByUserId = async (req, res, next) => {
-  const userId  = req.user._id;
+  const userId = req.user._id;
 
   try {
     if (!userId) {
@@ -155,7 +155,7 @@ export const getProfileByUserId = async (req, res, next) => {
 };
 
 export const updateProfile = async (req, res, next) => {
-  const userId  = req.user._id;
+  const userId = req.user._id;
 
   const { field, value } = req.body;
 
@@ -188,7 +188,7 @@ export const updateProfile = async (req, res, next) => {
         github: value.github,
       };
     } else if (field === "name") {
-      if (!first) {
+      if (!value.first) {
         throw new CustomError("First name is required", 400);
       }
       updateData[field] = {
