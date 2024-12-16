@@ -34,8 +34,8 @@ export const getAdvisors = async (req, res, next) => {
       "name"
     ).lean();
 
-    if (!advisors.length) {
-      throw new CustomError(`There are no advisors in your organization`, 404);
+    if (!advisors) {
+      throw new CustomError(`Advisors not found`, 404);
     }
 
     return res.status(200).json({
@@ -73,21 +73,21 @@ export const getAssignedAdvisors = async (req, res, next) => {
   }
 };
 
-export const getAssignedMenteeById = async (req, res, next) => {
-  const { _id } = req.params;
+export const getAssignedMenteeByMenteeId = async (req, res, next) => {
+  const { menteeId } = req.params;
 
   try {
-    if (!_id) {
+    if (!menteeId) {
       throw new CustomError("Mentee id is required", 400);
     }
 
-    const mentee = await Profile.findById(_id);
+    const mentee = await Profile.findById(menteeId);
 
     if (!mentee) {
       throw new CustomError("Mentee not found", 401);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: { message: "Mentee found" },
       data: { mentee },
     });
@@ -131,7 +131,7 @@ export const getAssignedMentees = async (req, res, next) => {
   }
 };
 
-export const getProfileByUserId = async (req, res, next) => {
+export const getProfile = async (req, res, next) => {
   const userId = req.user._id;
 
   try {
