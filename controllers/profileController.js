@@ -2,7 +2,7 @@ import Profile from "../models/profileModel.js";
 import CustomError from "../utils/CustomError.js";
 
 export const createProfile = async (req, res, next) => {
-  const { userId } = req.user;
+  const userId = req.user._id;
   const { first, last, email } = req.body;
 
   try {
@@ -48,7 +48,7 @@ export const getAdvisors = async (req, res, next) => {
 };
 
 export const getAssignedAdvisors = async (req, res, next) => {
-  const { userId } = req.user;
+  const userId  = req.user._id;
 
   try {
     if (!userId) {
@@ -97,7 +97,7 @@ export const getAssignedMenteeById = async (req, res, next) => {
 };
 
 export const getAssignedMentees = async (req, res, next) => {
-  const { userId } = req.user;
+  const userId  = req.user._id;
 
   try {
     if (!userId) {
@@ -132,7 +132,7 @@ export const getAssignedMentees = async (req, res, next) => {
 };
 
 export const getProfileByUserId = async (req, res, next) => {
-  const { userId } = req.user;
+  const userId  = req.user._id;
 
   try {
     if (!userId) {
@@ -155,7 +155,7 @@ export const getProfileByUserId = async (req, res, next) => {
 };
 
 export const updateProfile = async (req, res, next) => {
-  const { userId } = req.user;
+  const userId  = req.user._id;
 
   const { field, value } = req.body;
 
