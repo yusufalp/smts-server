@@ -1,6 +1,5 @@
 import express from "express";
 
-import { authenticateToken } from "../middlewares/authenticateToken.js";
 import { authorizeAdmin } from "../middlewares/authorizeRoles.js";
 import {
   getAllMeetings,
@@ -11,10 +10,8 @@ import {
 
 const router = express.Router();
 
-router.use(authenticateToken);
 router.use(authorizeAdmin);
 
-// need admin permission
 router.get("/meetings", getAllMeetings);
 router.get("/profiles", getAllProfiles);
 
