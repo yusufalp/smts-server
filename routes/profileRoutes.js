@@ -4,9 +4,9 @@ import {
   createProfile,
   getAdvisors,
   getAssignedAdvisors,
-  getAssignedMenteeById,
+  getAssignedMenteeByMenteeId,
   getAssignedMentees,
-  getProfileByUserId,
+  getProfile,
   updateProfile,
 } from "../controllers/profileController.js";
 
@@ -16,10 +16,10 @@ router.post("/profile", createProfile);
 
 router.get("/advisors", getAdvisors);
 router.get("/assigned/advisors", getAssignedAdvisors);
-router.get("/assigned/mentee/:_id", getAssignedMenteeById);
+router.get("/assigned/mentee/:menteeId", getAssignedMenteeByMenteeId);
 router.get("/assigned/mentees", getAssignedMentees);
 
-router.get("/profile", getProfileByUserId);
+router.get("/profile", getProfile);
 
 router.patch("/profile", updateProfile);
 
