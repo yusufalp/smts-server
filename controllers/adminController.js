@@ -1,6 +1,7 @@
 import Meeting from "../models/meetingModel.js";
 import Profile from "../models/profileModel.js";
 import CustomError from "../utils/CustomError.js";
+
 import { ROLES } from "../enums/roles.js";
 import { STATUSES } from "../enums/statuses.js";
 
@@ -167,7 +168,7 @@ export const updateProfileField = async (req, res, next) => {
     }
 
     if (!field || !value) {
-      throw new CustomError("Field and its value is required", 400);
+      throw new CustomError(`${field} and its value is required`, 400);
     }
 
     if (field === "status") {
