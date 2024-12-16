@@ -4,7 +4,7 @@ import CustomError from "../utils/CustomError.js";
 
 export const createMeeting = async (req, res, next) => {
   const { title, advisor, date, time, duration, notes } = req.body;
-  const { userId } = req.user;
+  const userId = req.user._id;
 
   const dateISO = new Date(`${date} ${time}`);
 
@@ -44,7 +44,7 @@ export const createMeeting = async (req, res, next) => {
 };
 
 export const getMeetings = async (req, res, next) => {
-  const { userId } = req.user;
+  const userId = req.user._id;
 
   try {
     if (!userId) {
@@ -72,10 +72,6 @@ export const getMeetings = async (req, res, next) => {
       .populate("learner", "name")
       .populate("advisor", "name")
       .lean();
-
-    if (!meetings.length) {
-      throw new CustomError("Meetings not found", 404);
-    }
 
     return res.status(200).json({
       success: { message: "Meetings found" },
