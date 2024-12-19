@@ -12,7 +12,7 @@ const profileSchema = new Schema(
         type: String,
       },
     },
-    email: { type: String, unique: true },
+    email: { type: String, unique: true, required: true },
     address: {
       street: {
         line1: { type: String },
