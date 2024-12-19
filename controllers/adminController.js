@@ -61,7 +61,7 @@ export const getAllMeetings = async (req, res, next) => {
 };
 
 export const getAllProfiles = async (req, res, next) => {
-  const { status, page = 1, limit = 5 } = req.query;
+  const { status, role, page = 1, limit = 5 } = req.query;
 
   const filters = {};
 
@@ -70,6 +70,14 @@ export const getAllProfiles = async (req, res, next) => {
       filters.status = STATUSES[status].key;
     } else {
       throw new CustomError(`Invalid status value`, 400);
+    }
+  }
+
+  if (role && role !== "all") {
+    if (ROLES[role]) {
+      filters.role = ROLES[role].key;
+    } else {
+      throw new CustomError(`Invalid role value`, 400);
     }
   }
 
@@ -160,10 +168,10 @@ export const updateAdvisor = async (req, res, next) => {
 };
 
 export const updateProfileField = async (req, res, next) => {
-  const { userId, field, value } = req.body;
+  const { profileId, field, value } = req.body;
 
   try {
-    if (!userId) {
+    if (!profileId) {
       throw new CustomError("User id is required", 400);
     }
 
@@ -183,7 +191,7 @@ export const updateProfileField = async (req, res, next) => {
 
     const updateData = { [field]: value };
 
-    const profile = await Profile.findOneAndUpdate({ userId }, updateData, {
+    const profile = await Profile.findByIdAndUpdate(profileId, updateData, {
       new: true,
     });
 
