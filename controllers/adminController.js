@@ -113,6 +113,27 @@ export const getAllProfiles = async (req, res, next) => {
   }
 };
 
+export const getProfileById = async (req, res, next) => {
+  const { _id } = req.params;
+
+  try {
+    if (!_id) {
+      throw new CustomError("Profile id is required", 404);
+    }
+
+    const profile = await Profile.findById(_id);
+
+    if (!profile) {
+      throw new CustomError("Profile not found", 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Profile found successfully" },
+      data: { profile },
+    });
+  } catch (error) {}
+};
+
 export const updateAdvisor = async (req, res, next) => {
   const { advisorId, userId } = req.body;
 
@@ -206,25 +227,4 @@ export const updateProfileField = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-export const getProfileById = async (req, res, next) => {
-  const { _id } = req.params;
-
-  try {
-    if (!_id) {
-      throw new CustomError("Profile id is required", 404);
-    }
-
-    const profile = await Profile.findById(_id);
-
-    if (!profile) {
-      throw new CustomError("Profile not found", 404);
-    }
-
-    return res.status(200).json({
-      success: { message: "Profile found successfully" },
-      data: { profile },
-    });
-  } catch (error) {}
 };
