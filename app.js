@@ -8,7 +8,7 @@ import cors from "cors";
 import connectDB from "./config/database.js";
 
 import adminRoutes from "./routes/adminRoutes.js";
-import meetingRoutes from "./routes/meetingRoutes.js";
+import applicationRoutes from "./routes/applicationRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 
 import { authenticateToken } from "./middlewares/authenticateToken.js";
@@ -32,19 +32,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(authenticateToken);
 
 app.use("/api/admin", adminRoutes);
-app.use("/api/meetings", meetingRoutes);
+app.use("/api/applications", applicationRoutes);
 app.use("/api/profiles", profileRoutes);
-
-app.get("/", (req, res, next) => {
-  res.send("We are just getting started...");
-});
 
 app.use((err, req, res, next) => {
   console.error("An error occurred:", err);
 
   if (err.code === 11000) {
     return res.status(400).json({
-      error: { message: "There was a problem when signing up." },
+      error: { message: "There was a problem with profiles." },
     });
   }
 
@@ -53,11 +49,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`
-    Server is listening on port ${PORT}. 
-    http://localhost:${PORT}
-    `);
+  console.log(`Server is listening on port ${PORT}. `);
 });
