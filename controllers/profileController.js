@@ -3,16 +3,16 @@ import CustomError from "../utils/CustomError.js";
 
 export const createProfile = async (req, res, next) => {
   const userId = req.user._id;
-  const { first, last, email } = req.body;
+  const { firstName, lastName, email } = req.body;
 
   try {
-    if (!first || !last || !email) {
+    if (!firstName || !lastName || !email) {
       throw new CustomError(`Missing required fields`, 400);
     }
 
     const profile = new Profile({
       userId,
-      name: { first, last },
+      name: { firstName, lastName },
       email,
     });
 
@@ -26,6 +26,8 @@ export const createProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteProfile = async (req, res, next) => {};
 
 export const getAdvisors = async (req, res, next) => {
   try {
@@ -55,9 +57,9 @@ export const getAssignedAdvisors = async (req, res, next) => {
       throw new CustomError("User id is required", 400);
     }
 
-    const advisors = await Profile.findOne({ userId }, "assigned")
-      .populate("assigned.mentor", "name")
-      .populate("assigned.coach", "name")
+    const advisors = await Profile.findOne({ userId }, "assignedRoles")
+      .populate("assignedRoles.mentorId", "name")
+      .populate("assignedRoles.coachId", "name")
       .lean();
 
     if (!advisors) {
@@ -66,7 +68,7 @@ export const getAssignedAdvisors = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: "Advisors populated successfully" },
-      data: advisors,
+      data: { advisors },
     });
   } catch (error) {
     next(error);
@@ -113,8 +115,8 @@ export const getAssignedMentees = async (req, res, next) => {
     const mentees = await Profile.find({
       status: "active",
       $or: [
-        { "assigned.mentor": profile._id },
-        { "assigned.coach": profile._id },
+        { "assignedRoles.mentor": profile._id },
+        { "assignedRoles.coach": profile._id },
       ],
     }).lean();
 
@@ -131,34 +133,11 @@ export const getAssignedMentees = async (req, res, next) => {
   }
 };
 
-export const getProfile = async (req, res, next) => {
-  const userId = req.user._id;
-
-  try {
-    if (!userId) {
-      throw new CustomError("User id is required", 400);
-    }
-
-    const profile = await Profile.findOne({ userId }).lean();
-
-    if (!profile) {
-      throw new CustomError("Profile not found", 404);
-    }
-
-    return res.status(200).json({
-      success: { message: "Profile found successfully" },
-      data: { profile },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const updateProfile = async (req, res, next) => {
   const userId = req.user._id;
 
   const { field, value } = req.body;
-
+  
   try {
     if (!userId) {
       throw new CustomError("User id is required", 400);
@@ -178,22 +157,22 @@ export const updateProfile = async (req, res, next) => {
         },
         city: value.city,
         state: value.state,
-        zip: value.zip,
+        postalCode: value.postalCode,
         country: "US",
       };
     } else if (field === "links") {
       updateData[field] = {
-        portfolio: value.portfolio,
-        linkedin: value.linkedin,
-        github: value.github,
+        portfolioUrl: value.portfolioUrl,
+        linkedinUrl: value.linkedinUrl,
+        githubUrl: value.githubUrl,
       };
     } else if (field === "name") {
-      if (!value.first) {
+      if (!value.firstName) {
         throw new CustomError("First name is required", 400);
       }
       updateData[field] = {
-        first: value.first,
-        last: value.last,
+        firstName: value.firstName,
+        lastName: value.lastName,
       };
     } else {
       updateData[field] = value;
@@ -209,6 +188,31 @@ export const updateProfile = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: `${field} updated successfully` },
+      data: { profile },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllProfiles = async (req, res, next) => {};
+
+export const getProfileById = async (req, res, next) => {
+  const { _id } = req.params;
+
+  try {
+    if (!_id) {
+      throw new CustomError("User id is required", 400);
+    }
+
+    const profile = await Profile.findById(_id).lean();
+
+    if (!profile) {
+      throw new CustomError("Profile not found", 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Profile found successfully" },
       data: { profile },
     });
   } catch (error) {
