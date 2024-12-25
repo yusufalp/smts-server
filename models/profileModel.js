@@ -35,7 +35,7 @@ const profileSchema = new Schema(
       coachId: { type: Schema.Types.ObjectId, ref: "Profile" },
     },
     // * active, inactive, graduated
-    accountStatus: { type: String, default: "active" },
+    status: { type: String, default: "active" },
     // * admin, mentor, coach, mentee, alumni, guest
     role: { type: String, default: "mentee" },
     cohort: { type: Number },
