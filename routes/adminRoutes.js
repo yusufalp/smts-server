@@ -1,24 +1,35 @@
 import express from "express";
 
 import { authorizeAdmin } from "../middlewares/authorizeRoles.js";
+
 import {
-  getAllMeetings,
+  deleteProfile,
   getAllProfiles,
   getProfileById,
-  updateAdvisor,
-  updateProfileField,
+  updateProfileAttributes,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
 
 router.use(authorizeAdmin);
 
-router.get("/meetings", getAllMeetings);
+// GET /api/admin/profiles
+// Retrieves all profiles.
+// Query fields: status, role
+// Pagination is applied
 router.get("/profiles", getAllProfiles);
-router.get("/profiles/profile/:_id", getProfileById);
 
-router.post("/advisor", updateAdvisor);
+// GET /api/admin/profiles/:_id
+// Retrieves profile details by ID.
+router.get("/profiles/:_id", getProfileById);
 
-router.post("/profile", updateProfileField);
+// PATCH /api/admin/profiles/:_id
+// Updates a profile by ID.
+// Query fields: status, role, cohort, graduation date.
+router.patch("/profiles/:_id", updateProfileAttributes);
+
+// DELETE /api/admin/profiles/:id
+// Deletes a profile by ID.
+router.delete("/profiles/:_id", deleteProfile);
 
 export default router;

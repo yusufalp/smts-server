@@ -1,64 +1,103 @@
-import Meeting from "../models/meetingModel.js";
 import Profile from "../models/profileModel.js";
 import CustomError from "../utils/CustomError.js";
 
 import { ROLES } from "../enums/roles.js";
 import { STATUSES } from "../enums/statuses.js";
 
-export const getAllMeetings = async (req, res, next) => {
-  const { title, learner, advisor, date, page = 1, limit = 5 } = req.query;
+// export const getAllAdvisors = async (req, res, next) => {
+//   try {
+//     const advisors = await Profile.find(
+//       { $or: [{ role: "mentor" }, { role: "coach" }] },
+//       "name"
+//     ).lean();
 
-  const filters = {};
+//     if (!advisors) {
+//       throw new CustomError(`Advisors not found`, 404);
+//     }
 
-  if (title) {
-    filters.title = title;
-  }
+//     return res.status(200).json({
+//       success: { message: "Advisors found" },
+//       data: { advisors },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
-  if (learner) {
-    filters.learner = learner;
-  }
+// export const assignAdvisor = async (req, res, next) => {
+//   const { _id } = req.params;
 
-  if (advisor) {
-    filters.advisor = advisor;
-  }
+//   try {
+//     if (!_id) {
+//       throw new CustomError("Profile id is required", 404);
+//     }
 
-  if (date) {
-    filters.date = date;
-  }
+//     const profile = await Profile.findById(_id);
 
-  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
-  const pageSize = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 100);
+//     if (!profile) {
+//       throw new CustomError("Profile not found", 404);
+//     }
 
-  try {
-    const meetings = await Meeting.find(filters)
-      .skip((pageNum - 1) * pageSize)
-      .limit(pageSize)
-      .populate("learner", "name")
-      .populate("advisor", "name")
-      .lean();
+//     return res.status(200).json({
+//       success: { message: "Profile found successfully" },
+//       data: { profile },
+//     });
+//   } catch (error) {}
+// };
 
-    if (!meetings) {
-      throw new CustomError("No meetings found", 404);
-    }
+// export const updateAdvisor = async (req, res, next) => {
+//   const { advisorId, userId } = req.body;
 
-    const totalCount = await Meeting.countDocuments(filters);
+//   try {
+//     if (!advisorId) {
+//       throw new CustomError("Advisor id is required", 400);
+//     }
 
-    return res.status(200).json({
-      success: { message: "All meetings retrieved successfully" },
-      data: {
-        meetings,
-        pagination: {
-          totalCount,
-          totalPages: Math.ceil(totalCount / pageSize),
-          currentPage: pageNum,
-          pageSize,
-        },
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//     if (!userId) {
+//       throw new CustomError("User id is required", 400);
+//     }
+
+//     const advisorProfile = await Profile.findOne(
+//       { userId: advisorId },
+//       "_id role"
+//     );
+
+//     if (!advisorProfile) {
+//       throw new CustomError("Advisor not found", 404);
+//     }
+
+//     const advisorRole = advisorProfile.role;
+
+//     if (
+//       ROLES[advisorRole].key !== "mentor" &&
+//       ROLES[advisorRole].key !== "coach"
+//     ) {
+//       throw new CustomError("Person is not an advisor", 400);
+//     }
+
+//     const advisorConfig = {
+//       mentor: { "assignedRoles.mentorId": advisorProfile._id },
+//       coach: { "assignedRoles.coachId": advisorProfile._id },
+//     };
+
+//     const updateData = advisorConfig[advisorRole];
+
+//     const profile = await Profile.findOneAndUpdate({ userId }, updateData, {
+//       new: true,
+//     });
+
+//     if (!profile) {
+//       throw new CustomError("Profile not found", 404);
+//     }
+
+//     return res.status(200).json({
+//       success: { message: "Advisor updated successfully" },
+//       data: { profile },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const getAllProfiles = async (req, res, next) => {
   const { status, role, page = 1, limit = 5 } = req.query;
@@ -114,73 +153,21 @@ export const getAllProfiles = async (req, res, next) => {
 };
 
 export const getProfileById = async (req, res, next) => {
-  const { _id } = req.params;
+  const profileId = req.params._id;
 
   try {
-    if (!_id) {
-      throw new CustomError("Profile id is required", 404);
+    if (!profileId) {
+      throw new CustomError("Profile id is required", 400);
     }
 
-    const profile = await Profile.findById(_id);
+    const profile = await Profile.findById(profileId);
 
     if (!profile) {
       throw new CustomError("Profile not found", 404);
     }
 
     return res.status(200).json({
-      success: { message: "Profile found successfully" },
-      data: { profile },
-    });
-  } catch (error) {}
-};
-
-export const updateAdvisor = async (req, res, next) => {
-  const { advisorId, userId } = req.body;
-
-  try {
-    if (!advisorId) {
-      throw new CustomError("Advisor id is required", 400);
-    }
-
-    if (!userId) {
-      throw new CustomError("User id is required", 400);
-    }
-
-    const advisorProfile = await Profile.findOne(
-      { userId: advisorId },
-      "_id role"
-    );
-
-    if (!advisorProfile) {
-      throw new CustomError("Advisor not found", 404);
-    }
-
-    const advisorRole = advisorProfile.role;
-
-    if (
-      ROLES[advisorRole].key !== "mentor" &&
-      ROLES[advisorRole].key !== "coach"
-    ) {
-      throw new CustomError("Person is not an advisor", 400);
-    }
-
-    const advisorConfig = {
-      mentor: { "assigned.mentor": advisorProfile._id },
-      coach: { "assigned.coach": advisorProfile._id },
-    };
-
-    const updateData = advisorConfig[advisorRole];
-
-    const profile = await Profile.findOneAndUpdate({ userId }, updateData, {
-      new: true,
-    });
-
-    if (!profile) {
-      throw new CustomError("Profile not found", 404);
-    }
-
-    return res.status(200).json({
-      success: { message: "Advisor updated successfully" },
+      success: { message: "Profile found" },
       data: { profile },
     });
   } catch (error) {
@@ -188,8 +175,9 @@ export const updateAdvisor = async (req, res, next) => {
   }
 };
 
-export const updateProfileField = async (req, res, next) => {
-  const { profileId, field, value } = req.body;
+export const updateProfileAttributes = async (req, res, next) => {
+  const profileId = req.params._id;
+  const { field, value } = req.body;
 
   try {
     if (!profileId) {
@@ -228,3 +216,5 @@ export const updateProfileField = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteProfile = async (req, res, next) => {};
