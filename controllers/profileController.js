@@ -1,6 +1,29 @@
 import Profile from "../models/profileModel.js";
 import CustomError from "../utils/CustomError.js";
 
+export const getAssignedMenteesByMenteeId = async (req, res, next) => {
+  const { menteeId } = req.params;
+
+  try {
+    if (!menteeId) {
+      throw new CustomError("Mentee id is required", 400);
+    }
+
+    const mentee = await Profile.findById(menteeId);
+
+    if (!mentee) {
+      throw new CustomError("Mentee not found", 401);
+    }
+
+    return res.status(200).json({
+      success: { message: "Mentee found" },
+      data: { mentee },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createProfile = async (req, res, next) => {
   const userId = req.user._id;
   const { firstName, lastName, email } = req.body;
@@ -21,28 +44,6 @@ export const createProfile = async (req, res, next) => {
     return res.status(201).json({
       success: { message: "A new profile is created" },
       data: { profile },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const deleteProfile = async (req, res, next) => {};
-
-export const getAdvisors = async (req, res, next) => {
-  try {
-    const advisors = await Profile.find(
-      { $or: [{ role: "mentor" }, { role: "coach" }] },
-      "name"
-    ).lean();
-
-    if (!advisors) {
-      throw new CustomError(`Advisors not found`, 404);
-    }
-
-    return res.status(200).json({
-      success: { message: "Advisors found" },
-      data: { advisors },
     });
   } catch (error) {
     next(error);
@@ -75,30 +76,7 @@ export const getAssignedAdvisors = async (req, res, next) => {
   }
 };
 
-export const getAssignedMenteeByMenteeId = async (req, res, next) => {
-  const { menteeId } = req.params;
-
-  try {
-    if (!menteeId) {
-      throw new CustomError("Mentee id is required", 400);
-    }
-
-    const mentee = await Profile.findById(menteeId);
-
-    if (!mentee) {
-      throw new CustomError("Mentee not found", 401);
-    }
-
-    return res.status(200).json({
-      success: { message: "Mentee found" },
-      data: { mentee },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getAssignedMentees = async (req, res, next) => {
+export const getAssignedLearners = async (req, res, next) => {
   const userId = req.user._id;
 
   try {
@@ -115,8 +93,8 @@ export const getAssignedMentees = async (req, res, next) => {
     const mentees = await Profile.find({
       status: "active",
       $or: [
-        { "assignedRoles.mentor": profile._id },
-        { "assignedRoles.coach": profile._id },
+        { "assignedRoles.mentorId": profile._id },
+        { "assignedRoles.coachId": profile._id },
       ],
     }).lean();
 
@@ -127,6 +105,29 @@ export const getAssignedMentees = async (req, res, next) => {
     return res.status(200).json({
       success: { message: "Mentees retrieved successfully" },
       data: { mentees },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProfile = async (req, res, next) => {
+  const userId = req.user._id;
+
+  try {
+    if (!userId) {
+      throw new CustomError("User id is required", 400);
+    }
+
+    const profile = await Profile.findOne({ userId }).lean();
+
+    if (!profile) {
+      throw new CustomError("Profile not found", 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Profile found successfully" },
+      data: { profile },
     });
   } catch (error) {
     next(error);
@@ -188,29 +189,6 @@ export const updateProfile = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: `${field} updated successfully` },
-      data: { profile },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getProfile = async (req, res, next) => {
-  const userId = req.user._id;
-
-  try {
-    if (!userId) {
-      throw new CustomError("User id is required", 400);
-    }
-
-    const profile = await Profile.findOne({ userId }).lean();
-
-    if (!profile) {
-      throw new CustomError("Profile not found", 404);
-    }
-
-    return res.status(200).json({
-      success: { message: "Profile found successfully" },
       data: { profile },
     });
   } catch (error) {

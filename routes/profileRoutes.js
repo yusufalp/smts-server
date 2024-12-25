@@ -2,41 +2,34 @@ import express from "express";
 
 import {
   createProfile,
-  deleteProfile,
-  getAdvisors,
   getAssignedAdvisors,
-  getAssignedMenteeByMenteeId,
-  getAssignedMentees,
+  getAssignedLearners,
   updateProfile,
   getProfile,
+  getAssignedMenteesByMenteeId,
 } from "../controllers/profileController.js";
 
 const router = express.Router();
 
-router.get("/advisors", getAdvisors);
+// GET /api/profiles/assigned/advisors
+// Retrieves a list of own advisors
 router.get("/assigned/advisors", getAssignedAdvisors);
-router.get("/assigned/mentee/:menteeId", getAssignedMenteeByMenteeId);
-router.get("/assigned/mentees", getAssignedMentees);
 
-// TODO: Move to admin routes
-// GET /api/profiles
-// Retrieves all profiles.
-// router.get("/", getAllProfiles);
+// GET /api/profiles/assigned/learners
+// Retrieves a list of own learners
+router.get("/assigned/learners", getAssignedLearners);
 
-// POST /api/profiles
+// POST /api/profiles/profile
 // Creates a new profile.
 router.post("/profile", createProfile);
 
-// GET /api/profiles/:id
-// Retrieves profile details by ID.
+// GET /api/profiles/profile
+// Retrieves own profile.
 router.get("/profile", getProfile);
 
-// PATCH /api/profiles/:id
-// Updates a profile by ID.
+// PATCH /api/profiles/profile
+// Updates own profile.
 router.patch("/profile", updateProfile);
 
-// DELETE /api/profiles/:id
-// Deletes a profile by ID.
-router.delete("/profile/:_id", deleteProfile);
-
+router.get("/assigned/mentees/:menteeId", getAssignedMenteesByMenteeId);
 export default router;
