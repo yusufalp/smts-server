@@ -1,29 +1,6 @@
 import Profile from "../models/profileModel.js";
 import CustomError from "../utils/CustomError.js";
 
-export const getAssignedMenteesByMenteeId = async (req, res, next) => {
-  const { menteeId } = req.params;
-
-  try {
-    if (!menteeId) {
-      throw new CustomError("Mentee id is required", 400);
-    }
-
-    const mentee = await Profile.findById(menteeId);
-
-    if (!mentee) {
-      throw new CustomError("Mentee not found", 401);
-    }
-
-    return res.status(200).json({
-      success: { message: "Mentee found" },
-      data: { mentee },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const createProfile = async (req, res, next) => {
   const userId = req.user._id;
   const { firstName, lastName, email } = req.body;
@@ -50,6 +27,26 @@ export const createProfile = async (req, res, next) => {
   }
 };
 
+export const getAllAdvisors = async (req, res, next) => {
+  try {
+    const advisors = await Profile.find(
+      { $or: [{ role: "mentor" }, { role: "coach" }] },
+      "name"
+    ).lean();
+
+    if (!advisors) {
+      throw new CustomError(`Advisors not found`, 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Advisors found" },
+      data: { advisors },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getAssignedAdvisors = async (req, res, next) => {
   const userId = req.user._id;
 
@@ -58,9 +55,9 @@ export const getAssignedAdvisors = async (req, res, next) => {
       throw new CustomError("User id is required", 400);
     }
 
-    const advisors = await Profile.findOne({ userId }, "assignedRoles")
-      .populate("assignedRoles.mentorId", "name")
-      .populate("assignedRoles.coachId", "name")
+    const advisors = await Profile.findOne({ userId }, "assigned")
+      .populate("assigned.mentorId", "name")
+      .populate("assigned.coachId", "name")
       .lean();
 
     if (!advisors) {
@@ -70,6 +67,29 @@ export const getAssignedAdvisors = async (req, res, next) => {
     return res.status(200).json({
       success: { message: "Advisors populated successfully" },
       data: { advisors },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAssignedLearnerById = async (req, res, next) => {
+  const { _id } = req.params;
+
+  try {
+    if (!_id) {
+      throw new CustomError("Profile id is required", 400);
+    }
+
+    const learner = await Profile.findById(_id);
+
+    if (!learner) {
+      throw new CustomError("Learner not found", 404);
+    }
+
+    return res.status(200).json({
+      success: { message: "Learner found successfully" },
+      data: { learner },
     });
   } catch (error) {
     next(error);
@@ -90,21 +110,21 @@ export const getAssignedLearners = async (req, res, next) => {
       throw new CustomError("Profile not found", 404);
     }
 
-    const mentees = await Profile.find({
+    const learners = await Profile.find({
       status: "active",
       $or: [
-        { "assignedRoles.mentorId": profile._id },
-        { "assignedRoles.coachId": profile._id },
+        { "assigned.mentorId": profile._id },
+        { "assigned.coachId": profile._id },
       ],
     }).lean();
 
-    if (!mentees) {
-      throw new CustomError("Mentees not found", 404);
+    if (!learners) {
+      throw new CustomError("Learners not found", 404);
     }
 
     return res.status(200).json({
-      success: { message: "Mentees retrieved successfully" },
-      data: { mentees },
+      success: { message: "Learners retrieved successfully" },
+      data: { learners },
     });
   } catch (error) {
     next(error);

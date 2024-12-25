@@ -4,26 +4,6 @@ import CustomError from "../utils/CustomError.js";
 import { ROLES } from "../enums/roles.js";
 import { STATUSES } from "../enums/statuses.js";
 
-// export const getAllAdvisors = async (req, res, next) => {
-//   try {
-//     const advisors = await Profile.find(
-//       { $or: [{ role: "mentor" }, { role: "coach" }] },
-//       "name"
-//     ).lean();
-
-//     if (!advisors) {
-//       throw new CustomError(`Advisors not found`, 404);
-//     }
-
-//     return res.status(200).json({
-//       success: { message: "Advisors found" },
-//       data: { advisors },
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 // export const assignAdvisor = async (req, res, next) => {
 //   const { _id } = req.params;
 
@@ -76,8 +56,8 @@ import { STATUSES } from "../enums/statuses.js";
 //     }
 
 //     const advisorConfig = {
-//       mentor: { "assignedRoles.mentorId": advisorProfile._id },
-//       coach: { "assignedRoles.coachId": advisorProfile._id },
+//       mentor: { "assigned.mentorId": advisorProfile._id },
+//       coach: { "assigned.coachId": advisorProfile._id },
 //     };
 
 //     const updateData = advisorConfig[advisorRole];
