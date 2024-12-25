@@ -30,7 +30,7 @@ const profileSchema = new Schema(
       githubUrl: { type: String },
     },
     bio: { type: String },
-    assignedRoles: {
+    assigned: {
       mentorId: { type: Schema.Types.ObjectId, ref: "Profile" },
       coachId: { type: Schema.Types.ObjectId, ref: "Profile" },
     },
