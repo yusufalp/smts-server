@@ -137,7 +137,7 @@ export const updateProfile = async (req, res, next) => {
   const userId = req.user._id;
 
   const { field, value } = req.body;
-  
+
   try {
     if (!userId) {
       throw new CustomError("User id is required", 400);
@@ -195,17 +195,15 @@ export const updateProfile = async (req, res, next) => {
   }
 };
 
-export const getAllProfiles = async (req, res, next) => {};
-
-export const getProfileById = async (req, res, next) => {
-  const { _id } = req.params;
+export const getProfile = async (req, res, next) => {
+  const userId = req.user._id;
 
   try {
-    if (!_id) {
+    if (!userId) {
       throw new CustomError("User id is required", 400);
     }
 
-    const profile = await Profile.findById(_id).lean();
+    const profile = await Profile.findOne({ userId }).lean();
 
     if (!profile) {
       throw new CustomError("Profile not found", 404);
