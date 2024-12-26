@@ -187,17 +187,23 @@ export const updateProfile = async (req, res, next) => {
         linkedinUrl: value.linkedinUrl,
         githubUrl: value.githubUrl,
       };
-    } else if (field === "name") {
+    } else if (field === "about") {
       if (!value.firstName) {
         throw new CustomError("First name is required", 400);
       }
-      updateData[field] = {
+      updateData.name = {
         firstName: value.firstName,
         lastName: value.lastName,
       };
+      updateData.bio = value.bio;
+    } else if (field === "contact") {
+      updateData.email = value.email;
+      updateData.phoneNumber = value.phoneNumber;
     } else {
       updateData[field] = value;
     }
+
+    console.log("updateData :>> ", updateData);
 
     const profile = await Profile.findOneAndUpdate({ userId }, updateData, {
       new: true,
