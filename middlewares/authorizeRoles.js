@@ -31,4 +31,3 @@ export function authorizeRoles(allowedRoles) {
 }
 
 export const authorizeAdmin = authorizeRoles(["admin"]);
-export const authorizeAdvisor = authorizeRoles(["mentor", "coach"]);
