@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
-import { STATUSES } from "../enums/statuses";
-import { ROLES } from "../enums/roles";
+import { STATUSES } from "../enums/statuses.js";
+import { ROLES } from "../enums/roles.js";
 
 const profileSchema = new Schema(
   {
