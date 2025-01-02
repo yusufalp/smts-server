@@ -1,6 +1,4 @@
 import { Schema, model } from "mongoose";
-import { STATUSES } from "../enums/statuses.js";
-import { ROLES } from "../enums/roles.js";
 
 const profileSchema = new Schema(
   {
@@ -36,17 +34,13 @@ const profileSchema = new Schema(
     },
     bio: { type: String },
     assigned: {
-      mentor: {
-        profileId: { type: Schema.Types.ObjectId, ref: "Profile" },
-      },
-      coach: {
-        profileId: { type: Schema.Types.ObjectId, ref: "Profile" },
-      },
+      mentor: { type: Schema.Types.ObjectId, ref: "Profile" },
+      coach: { type: Schema.Types.ObjectId, ref: "Profile" },
     },
     // * active, inactive, graduated
-    profileStatus: { type: String, default: STATUSES.active.key },
+    profileStatus: { type: String, default: "active" },
     // * admin, mentor, coach, mentee, alumni, guest, applicant, prospective
-    role: { type: String, default: ROLES.mentee.key },
+    role: { type: String, default: "mentee" },
     cohort: { type: Number },
     graduationDate: { type: Date },
   },

@@ -31,7 +31,7 @@ export const getAllAdvisors = async (req, res, next) => {
   try {
     const advisors = await Profile.find(
       { $or: [{ role: "mentor" }, { role: "coach" }] },
-      "name"
+      "name email"
     ).lean();
 
     if (!advisors) {
@@ -56,8 +56,8 @@ export const getAssignedAdvisors = async (req, res, next) => {
     }
 
     const advisors = await Profile.findOne({ userId }, "assigned")
-      .populate("assigned.mentorId", "name")
-      .populate("assigned.coachId", "name")
+      .populate("assigned.mentor", "name")
+      .populate("assigned.coach", "name")
       .lean();
 
     if (!advisors) {
@@ -193,6 +193,7 @@ export const updateProfile = async (req, res, next) => {
       }
       updateData.name = {
         firstName: value.firstName,
+        middleName: value.middleName,
         lastName: value.lastName,
       };
       updateData.bio = value.bio;

@@ -49,8 +49,8 @@ import { STATUSES } from "../enums/statuses.js";
 //     const advisorRole = advisorProfile.role;
 
 //     if (
-//       ROLES[advisorRole].key !== "mentor" &&
-//       ROLES[advisorRole].key !== "coach"
+//       ROLES[advisorRole] !== "mentor" &&
+//       ROLES[advisorRole] !== "coach"
 //     ) {
 //       throw new CustomError("Person is not an advisor", 400);
 //     }
@@ -86,7 +86,7 @@ export const getAllProfiles = async (req, res, next) => {
 
   if (status && status !== "all") {
     if (STATUSES[status]) {
-      filters.status = STATUSES[status].key;
+      filters.profileStatus = status;
     } else {
       throw new CustomError(`Invalid status value`, 400);
     }
@@ -94,7 +94,7 @@ export const getAllProfiles = async (req, res, next) => {
 
   if (role && role !== "all") {
     if (ROLES[role]) {
-      filters.role = ROLES[role].key;
+      filters.role = role;
     } else {
       throw new CustomError(`Invalid role value`, 400);
     }
