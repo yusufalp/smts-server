@@ -4,27 +4,6 @@ import CustomError from "../utils/CustomError.js";
 import { ROLES } from "../enums/roles.js";
 import { STATUSES } from "../enums/statuses.js";
 
-// export const assignAdvisor = async (req, res, next) => {
-//   const { _id } = req.params;
-
-//   try {
-//     if (!_id) {
-//       throw new CustomError("Profile id is required", 404);
-//     }
-
-//     const profile = await Profile.findById(_id);
-
-//     if (!profile) {
-//       throw new CustomError("Profile not found", 404);
-//     }
-
-//     return res.status(200).json({
-//       success: { message: "Profile found successfully" },
-//       data: { profile },
-//     });
-//   } catch (error) {}
-// };
-
 // export const updateAdvisor = async (req, res, next) => {
 //   const { advisorId, userId } = req.body;
 
@@ -163,7 +142,7 @@ export const getProfileById = async (req, res, next) => {
   }
 };
 
-export const updateProfileAttributes = async (req, res, next) => {
+export const updateProfileById = async (req, res, next) => {
   const profileId = req.params._id;
   const { field, value } = req.body;
 
@@ -176,11 +155,13 @@ export const updateProfileAttributes = async (req, res, next) => {
       throw new CustomError(`${field} and its value is required`, 400);
     }
 
-    if (field === "status") {
+    if (field === "profileStatus") {
       if (!STATUSES[value]) {
         throw new CustomError("Invalid status value", 400);
       }
-    } else if (field === "role") {
+    }
+
+    if (field === "role") {
       if (!ROLES[value]) {
         throw new CustomError("Invalid role value", 400);
       }
