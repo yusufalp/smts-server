@@ -17,13 +17,15 @@ const router = express.Router();
 router.post("/profile", createProfile);
 
 // GET /api/profiles/profile
-// Retrieve a list of all mentors and coaches
+// Retrieves a list of names and emails of all mentors and coaches
 router.get("/advisors", getAllAdvisors);
 
 // GET /api/profiles/assigned/advisors
 // Retrieves a list of own advisors
 router.get("/assigned/advisors", getAssignedAdvisors);
 
+// GET /api/profiles/assigned/learner/:_id
+// Retrieves a specific learner assigned to an advisor
 router.get("/assigned/learner/:_id", getAssignedLearnerById);
 
 // GET /api/profiles/assigned/learners
