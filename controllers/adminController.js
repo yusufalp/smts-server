@@ -80,9 +80,17 @@ import { STATUSES } from "../enums/statuses.js";
 // };
 
 export const getAllProfiles = async (req, res, next) => {
-  const { status, role, page = 1, limit = 5 } = req.query;
+  const { firstName, lastName, status, role, page = 1, limit = 5 } = req.query;
 
   const filters = {};
+
+  if (firstName) {
+    filters["name.firstName"] = { $regex: firstName, $options: "i" };
+  }
+
+  if (lastName) {
+    filters["name.lastName"] = { $regex: lastName, $options: "i" };
+  }
 
   if (status && status !== "all") {
     if (STATUSES[status]) {
