@@ -6,7 +6,7 @@ import {
   deleteProfile,
   getAllProfiles,
   getProfileById,
-  updateProfileAttributes,
+  updateProfileById,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -15,7 +15,7 @@ router.use(authorizeAdmin);
 
 // GET /api/admin/profiles
 // Retrieves all profiles.
-// Query fields: status, role
+// Query fields: first name, last name, status, role
 // Pagination is applied
 router.get("/profiles", getAllProfiles);
 
@@ -25,8 +25,8 @@ router.get("/profiles/:_id", getProfileById);
 
 // PATCH /api/admin/profiles/:_id
 // Updates a profile by ID.
-// Query fields: status, role, cohort, graduation date.
-router.patch("/profiles/:_id", updateProfileAttributes);
+// Query fields: assigned, profile status, role, cohort, graduation date.
+router.patch("/profiles/:_id", updateProfileById);
 
 // DELETE /api/admin/profiles/:id
 // Deletes a profile by ID.
