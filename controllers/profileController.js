@@ -111,10 +111,10 @@ export const getAssignedLearners = async (req, res, next) => {
     }
 
     const learners = await Profile.find({
-      status: "active",
+      profileStatus: "active",
       $or: [
-        { "assigned.mentorId": profile._id },
-        { "assigned.coachId": profile._id },
+        { "assigned.mentor": profile._id },
+        { "assigned.coach": profile._id },
       ],
     }).lean();
 
@@ -203,8 +203,6 @@ export const updateProfile = async (req, res, next) => {
     } else {
       updateData[field] = value;
     }
-
-    console.log("updateData :>> ", updateData);
 
     const profile = await Profile.findOneAndUpdate({ userId }, updateData, {
       new: true,
