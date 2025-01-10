@@ -27,7 +27,7 @@ export const createProfile = async (req, res, next) => {
   }
 };
 
-export const getAllAdvisors = async (req, res, next) => {
+export const getAdvisors = async (req, res, next) => {
   try {
     const advisors = await Profile.find(
       { $or: [{ role: "mentor" }, { role: "coach" }] },

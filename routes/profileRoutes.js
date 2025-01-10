@@ -2,7 +2,7 @@ import express from "express";
 
 import {
   createProfile,
-  getAllAdvisors,
+  getAdvisors,
   getAssignedAdvisors,
   getAssignedLearnerById,
   getAssignedLearners,
@@ -18,7 +18,7 @@ router.post("/profile", createProfile);
 
 // GET /api/profiles/profile
 // Retrieves a list of names and emails of all mentors and coaches
-router.get("/advisors", getAllAdvisors);
+router.get("/advisors", getAdvisors);
 
 // GET /api/profiles/assigned/advisors
 // Retrieves a list of own advisors
