@@ -152,7 +152,10 @@ export const updateProfileById = async (req, res, next) => {
     }
 
     if (!field || !value) {
-      throw new CustomError(`${field} and its value is required`, 400);
+      throw new CustomError(
+        `A field and its value is required to be updated`,
+        400
+      );
     }
 
     if (field === "profileStatus") {
