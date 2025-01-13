@@ -98,6 +98,10 @@ export const getAssignedLearnerById = async (req, res, next) => {
 
 export const getAssignedLearners = async (req, res, next) => {
   const userId = req.user._id;
+  const { page = 1, limit = 5 } = req.query;
+
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const pageSize = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 100);
 
   try {
     if (!userId) {
@@ -110,13 +114,20 @@ export const getAssignedLearners = async (req, res, next) => {
       throw new CustomError("Profile not found", 404);
     }
 
-    const learners = await Profile.find({
+    const filters = {
       profileStatus: "active",
       $or: [
         { "assigned.mentor": profile._id },
         { "assigned.coach": profile._id },
       ],
-    }).lean();
+    };
+
+    const learners = await Profile.find(filters)
+      .skip((pageNum - 1) * pageSize)
+      .limit(pageSize)
+      .lean();
+
+    const totalCount = await Profile.countDocuments(filters);
 
     if (!learners) {
       throw new CustomError("Learners not found", 404);
@@ -124,7 +135,15 @@ export const getAssignedLearners = async (req, res, next) => {
 
     return res.status(200).json({
       success: { message: "Learners retrieved successfully" },
-      data: { learners },
+      data: {
+        learners,
+        pagination: {
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          currentPage: pageNum,
+          pageSize,
+        },
+      },
     });
   } catch (error) {
     next(error);
