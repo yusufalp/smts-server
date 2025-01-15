@@ -1,16 +1,20 @@
 import Profile from "../models/profileModel.js";
+import CustomError from "../utils/CustomError.js";
 
 async function getRole(userId) {
   try {
     const userProfile = await Profile.findOne({ userId }, "role");
 
     if (!userProfile) {
-      throw new Error("Profile not found");
+      throw new CustomError("Profile not found", 404);
     }
 
     return userProfile.role;
   } catch (error) {
-    throw new Error(`Failed to retrieve user role: ${error.message}`);
+    throw new CustomError(
+      `Failed to retrieve user role: ${error.message}`,
+      400
+    );
   }
 }
 
@@ -20,7 +24,7 @@ export function authorizeRoles(allowedRoles) {
       const role = await getRole(req.user._id);
 
       if (!allowedRoles.includes(role)) {
-        return res.status(403).json({ message: "Access denied" });
+        throw new CustomError("Access denied", 403);
       }
 
       next();
