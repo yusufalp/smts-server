@@ -144,35 +144,28 @@ export const getProfileById = async (req, res, next) => {
 
 export const updateProfileById = async (req, res, next) => {
   const profileId = req.params._id;
-  const { field, value } = req.body;
+  const { fields } = req.body;
 
   try {
     if (!profileId) {
       throw new CustomError("User id is required", 400);
     }
 
-    if (!field || !value) {
-      throw new CustomError(
-        `A field and its value is required to be updated`,
-        400
-      );
-    }
+    for (let key in fields) {
+      if (key === "profileStatus") {
+        if (!STATUSES[fields[key]]) {
+          throw new CustomError("Invalid status value", 400);
+        }
+      }
 
-    if (field === "profileStatus") {
-      if (!STATUSES[value]) {
-        throw new CustomError("Invalid status value", 400);
+      if (key === "role") {
+        if (!ROLES[fields[key]]) {
+          throw new CustomError("Invalid role value", 400);
+        }
       }
     }
 
-    if (field === "role") {
-      if (!ROLES[value]) {
-        throw new CustomError("Invalid role value", 400);
-      }
-    }
-
-    const updateData = { [field]: value };
-
-    const profile = await Profile.findByIdAndUpdate(profileId, updateData, {
+    const profile = await Profile.findByIdAndUpdate(profileId, fields, {
       new: true,
     });
 
@@ -181,7 +174,7 @@ export const updateProfileById = async (req, res, next) => {
     }
 
     return res.status(200).json({
-      success: { message: `${field} updated successfully` },
+      success: { message: `Profile updated successfully` },
       data: { profile },
     });
   } catch (error) {
