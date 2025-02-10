@@ -75,16 +75,25 @@ export const getAssignedAdvisors = async (req, res, next) => {
 
 export const getAssignedLearnerById = async (req, res, next) => {
   const { _id } = req.params;
+  const { advisorId } = req.query;
 
   try {
     if (!_id) {
-      throw new CustomError("Profile id is required", 400);
+      throw new CustomError("Learner id is required", 400);
     }
 
     const learner = await Profile.findById(_id);
 
     if (!learner) {
       throw new CustomError("Learner not found", 404);
+    }
+
+    // check if the learner is actually assigned to the requester
+    if (
+      learner?.assigned?.mentor?.toString() !== advisorId &&
+      learner?.assigned?.coach?.toString() !== advisorId
+    ) {
+      throw new CustomError("This learner is not assigned to you", 401);
     }
 
     return res.status(200).json({
