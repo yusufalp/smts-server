@@ -6,5 +6,5 @@ export const ROLES = Object.freeze({
   alumni: { id: "Alumni", description: "", permissions: [] },
   guest: { id: "Guest", description: "", permissions: [] },
   applicant: { id: "Applicant", description: "", permissions: [] },
-  prospective: { id: "Prospective", description: "", permissions: [] },
+  prospect: { id: "Prospect", description: "", permissions: [] },
 });
