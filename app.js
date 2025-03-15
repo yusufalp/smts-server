@@ -8,7 +8,6 @@ import cors from "cors";
 import connectDB from "./config/database.js";
 
 import adminRoutes from "./routes/adminRoutes.js";
-import applicationRoutes from "./routes/applicationRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 
 import { authenticateToken } from "./middlewares/authenticateToken.js";
@@ -32,7 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(authenticateToken);
 
 app.use("/api/admin", adminRoutes);
-app.use("/api/applications", applicationRoutes);
 app.use("/api/profiles", profileRoutes);
 
 app.use((err, req, res, next) => {
