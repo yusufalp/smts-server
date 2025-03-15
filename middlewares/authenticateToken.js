@@ -1,3 +1,4 @@
+import CustomError from "../utils/CustomError.js";
 import { decodeJwtToken } from "../utils/token.js";
 
 export function authenticateToken(req, res, next) {
@@ -5,7 +6,7 @@ export function authenticateToken(req, res, next) {
     const token = req.get("Authorization")?.split(" ")[1];
 
     if (!token) {
-      throw new Error("Token is missing");
+      throw new CustomError("Access Denied", 403);
     }
 
     const user = decodeJwtToken(token);
