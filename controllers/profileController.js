@@ -90,8 +90,8 @@ export const getAssignedLearnerById = async (req, res, next) => {
 
     // check if the learner is actually assigned to the requester
     if (
-      learner?.assigned?.mentor?.toString() !== advisorId &&
-      learner?.assigned?.coach?.toString() !== advisorId
+      learner.assigned?.mentor?.toString() !== advisorId &&
+      learner.assigned?.coach?.toString() !== advisorId
     ) {
       throw new CustomError("This learner is not assigned to you", 401);
     }
