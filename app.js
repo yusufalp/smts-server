@@ -9,6 +9,7 @@ import connectDB from "./config/database.js";
 
 import adminRoutes from "./routes/adminRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
 
 import { authenticateToken } from "./middlewares/authenticateToken.js";
 
@@ -32,6 +33,7 @@ app.use(authenticateToken);
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/profiles", profileRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 app.use((err, req, res, next) => {
   console.error("An error occurred:", err);
