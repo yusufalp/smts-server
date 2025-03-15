@@ -18,12 +18,12 @@ async function getRole(userId) {
   }
 }
 
-export function authorizeRoles(allowedRoles) {
+export function authorizeRoles(...roles) {
   return async function (req, res, next) {
     try {
       const role = await getRole(req.user._id);
 
-      if (!allowedRoles.includes(role)) {
+      if (!roles.includes(role)) {
         throw new CustomError("Access denied", 403);
       }
 
@@ -33,5 +33,3 @@ export function authorizeRoles(allowedRoles) {
     }
   };
 }
-
-export const authorizeAdmin = authorizeRoles(["admin"]);

@@ -1,6 +1,6 @@
 import express from "express";
 
-import { authorizeAdmin } from "../middlewares/authorizeRoles.js";
+import { authorizeRoles } from "../middlewares/authorizeRoles.js";
 
 import {
   deleteProfile,
@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.use(authorizeAdmin);
+router.use(authorizeRoles("admin"));
 
 // GET /api/admin/profiles
 // Retrieves all profiles.
