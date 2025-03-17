@@ -13,7 +13,7 @@ export const createMeeting = async (req, res, next) => {
     const newMeeting = new Meeting({
       title,
       organizer,
-      participants: [advisor],
+      participants: [organizer, advisor],
       scheduledAt: dateISO,
       durationMinutes: duration,
       description,
