@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
-import { STATUSES } from "../constants/statuses";
-import { ROLES } from "../constants/roles";
+import { ROLES } from "../constants/roles.js";
+import { STATUSES } from "../constants/statuses.js";
 
 const profileSchema = new Schema(
   {
@@ -10,20 +10,24 @@ const profileSchema = new Schema(
       firstName: {
         type: String,
         required: true,
+        trim: true,
       },
       lastName: {
         type: String,
+        trim: true,
       },
       middleName: {
         type: String,
+        trim: true,
+        default: "",
       },
     },
-    email: { type: String, unique: true, required: true },
+    email: { type: String, unique: true, required: true, trim: true },
     phoneNumber: { type: Number },
     address: {
       street: {
         line1: { type: String },
-        line2: { type: String },
+        line2: { type: String, default: "" },
       },
       city: { type: String },
       state: { type: String },
@@ -37,8 +41,8 @@ const profileSchema = new Schema(
     },
     bio: { type: String },
     assigned: {
-      mentor: { type: Schema.Types.ObjectId, ref: "Profile" },
-      coach: { type: Schema.Types.ObjectId, ref: "Profile" },
+      mentor: { type: Schema.Types.ObjectId, ref: "Profile", default: null },
+      coach: { type: Schema.Types.ObjectId, ref: "Profile", default: null },
     },
     status: {
       type: String,

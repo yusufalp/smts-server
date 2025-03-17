@@ -1,8 +1,8 @@
 import Profile from "../models/profileModel.js";
 import CustomError from "../utils/CustomError.js";
 
-import { ROLES } from "../enums/roles.js";
-import { STATUSES } from "../enums/statuses.js";
+import { ROLES } from "../constants/roles.js";
+import { STATUSES } from "../constants/statuses.js";
 
 // export const updateAdvisor = async (req, res, next) => {
 //   const { advisorId, userId } = req.body;
