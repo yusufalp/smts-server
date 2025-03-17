@@ -3,7 +3,7 @@ import express from "express";
 import {
   getAttendance,
   markAttendance,
-} from "../controllers/attendanceController";
+} from "../controllers/attendanceController.js";
 
 const router = express.Router();
 
