@@ -23,7 +23,6 @@ const meetingSchema = new Schema(
     ],
     scheduledAt: { type: Date, required: true },
     durationMinutes: { type: Number, required: true },
-    // * scheduled, cancelled, completed
     meetingStatus: {
       type: String,
       default: "scheduled",
