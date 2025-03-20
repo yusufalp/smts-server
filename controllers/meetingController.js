@@ -78,6 +78,10 @@ export const getMeetings = async (req, res, next) => {
       .limit(pageSize)
       .lean();
 
+    if (!meetings.length) {
+      throw new CustomError("No meetings found", 404);
+    }
+
     const totalCount = await Meeting.countDocuments(filters);
 
     return res.status(200).json({
